@@ -40,17 +40,27 @@ export const trust = {
 } as const;
 
 /**
- * Analytics : tout se pilote par variables d’environnement (Vercel → Settings → Environment Variables).
- * - PUBLIC_META_PIXEL_ID : ID du pixel Meta. Renseigné = pixel chargé. Vide ou absent = rien n’est chargé.
- * - PUBLIC_GTM_ID        : ID Google Tag Manager (facultatif).
- * Le préfixe PUBLIC_ est obligatoire pour qu’Astro expose la variable au navigateur.
- * Un redéploiement est nécessaire après chaque changement de valeur.
- * Pixel de l’ancien site, à titre de référence : 39199030669683909.
- * TODO MIG : prévoir un bandeau de consentement (RGPD) avant d’activer le pixel en production.
+ * Analytics. Deux façons de brancher le pixel Meta ou GTM, au choix :
+ *
+ * 1. EN DUR, ICI (le plus simple si tu n’as pas accès au compte Vercel qui déploie) :
+ *    renseigne META_PIXEL_ID ci-dessous, commite et pousse. Le déploiement se fait tout seul.
+ *    Un ID de pixel n’est pas un secret : il apparaît de toute façon en clair dans le code
+ *    de la page pour tous les visiteurs.
+ *
+ * 2. PAR VARIABLE D’ENVIRONNEMENT Vercel (prioritaire sur la valeur ci-dessous) :
+ *    PUBLIC_META_PIXEL_ID et PUBLIC_GTM_ID. Le préfixe PUBLIC_ est obligatoire.
+ *    Un redéploiement est nécessaire après chaque changement de valeur.
+ *
+ * Laisser vide des deux côtés = aucun script de tracking n’est chargé.
+ * ID du pixel présent sur l’ancien site migecosystem.com, pour mémoire : 39199030669683909.
+ * TODO MIG : prévoir un bandeau de consentement (RGPD) avant d’activer le pixel.
  */
+const META_PIXEL_ID = '';
+const GTM_ID = '';
+
 export const analytics = {
-  metaPixelId: import.meta.env.PUBLIC_META_PIXEL_ID ?? '',
-  gtmId: import.meta.env.PUBLIC_GTM_ID ?? '',
+  metaPixelId: import.meta.env.PUBLIC_META_PIXEL_ID || META_PIXEL_ID,
+  gtmId: import.meta.env.PUBLIC_GTM_ID || GTM_ID,
 } as const;
 
 export const nav = [

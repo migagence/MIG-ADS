@@ -65,14 +65,30 @@ Chaque événement embarque les paramètres de campagne conservés et les varian
 
 ### Activer le pixel Meta ou GTM
 
-Tout passe par des **variables d’environnement Vercel** (Settings → Environment Variables), pas par le code :
+Deux méthodes, au choix.
+
+**Méthode 1 — dans le code** (recommandée si tu n’as pas accès au compte Vercel qui déploie). Dans `src/data/site.ts`, en haut du bloc `analytics` :
+
+```ts
+const META_PIXEL_ID = '39199030669683909'; // ton ID, chiffres uniquement
+```
+
+Commite et pousse : le déploiement se déclenche tout seul. Un ID de pixel n’est pas un secret, il apparaît de toute façon en clair dans le code de la page.
+
+**Méthode 2 — par variable d’environnement Vercel** (prioritaire sur la valeur du code) :
 
 | Variable | Effet |
 | --- | --- |
-| `PUBLIC_META_PIXEL_ID` | ID du pixel Meta. Renseignée = pixel chargé. Absente ou vide = rien n’est chargé. |
-| `PUBLIC_GTM_ID` | ID Google Tag Manager (facultatif). |
+| `PUBLIC_META_PIXEL_ID` | ID du pixel Meta |
+| `PUBLIC_GTM_ID` | ID Google Tag Manager |
 
-Le préfixe `PUBLIC_` est obligatoire (Astro n’expose au navigateur que ces variables). Le site étant statique, **un redéploiement est nécessaire** après chaque changement de valeur. Pixel de l’ancien site, pour mémoire : `39199030669683909`. À n’activer qu’avec un bandeau de consentement (RGPD).
+Le préfixe `PUBLIC_` est obligatoire, c’est lui qui autorise Astro à exposer la valeur au navigateur. Le site étant statique, **un redéploiement est nécessaire** après chaque changement.
+
+Laisser vide des deux côtés = aucun script de tracking n’est chargé. À n’activer qu’avec un bandeau de consentement (RGPD).
+
+### Déploiement automatique
+
+Le dépôt `migagence/MIG-ADS` est relié au compte Vercel de MIG (`mig-09eb`), sur deux projets : `mig-ads` et `mig-lp`. Chaque push sur `main` les déploie automatiquement. Pour passer en production sur le vrai domaine, y définir `SITE_URL=https://www.migecosystem.com` (sans elle, la page reste en `noindex`).
 
 ## Tests A/B
 
