@@ -147,7 +147,7 @@ export const caseStudies: CaseStudy[] = [
     brand: 'Joia Paris',
     logo: joiaLogo,
     logoHeight: 24,
-    niche: 'Mode',
+    niche: 'Compléments alimentaires',
     before: '4K€',
     after: '250K€',
     unit: '/mois',
@@ -171,7 +171,7 @@ export const caseStudies: CaseStudy[] = [
       { image: joiaJanvier, alt: 'Shopify Joia Paris : 235 530 € de ventes totales du 1er au 31 janvier 2025', label: 'Shopify · janv. 2025 · 235 530 €' },
     ],
     story:
-      'Marque de mode parisienne à 4 000€/mois. MIG intervient sur le site web, les Ads et l’email et amène la marque à 250 000€/mois : 235 530€ de ventes sur le seul mois de janvier 2025.',
+      'Marque de compléments alimentaires à 4 000€/mois. MIG intervient sur le site web, les Ads et l’email et amène la marque à 250 000€/mois : 235 530€ de ventes sur le seul mois de janvier 2025.',
   },
 ];
 
