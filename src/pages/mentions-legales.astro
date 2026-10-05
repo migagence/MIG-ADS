@@ -1,0 +1,13 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site } from '../data/site';
+---
+<Legal title="Mentions légales" path="/mentions-legales">
+  <p class="todo">TODO MIG : compléter cette page avec la raison sociale, la forme juridique, l’adresse du siège, le numéro d’immatriculation, le directeur de la publication et l’hébergeur avant mise en ligne.</p>
+  <h2>Éditeur du site</h2>
+  <p>{site.legalName} · Contact : <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a></p>
+  <h2>Hébergement</h2>
+  <p>À compléter.</p>
+  <h2>Propriété intellectuelle</h2>
+  <p>L’ensemble des contenus de ce site (textes, visuels, logos) est la propriété de leurs auteurs respectifs. Les logos des marques clientes sont affichés avec leur accord dans le cadre des collaborations présentées.</p>
+</Legal>

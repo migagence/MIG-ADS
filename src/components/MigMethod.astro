@@ -1,0 +1,74 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import SectionHeading from './SectionHeading.astro';
+import { methodSteps } from '../data/method';
+---
+<section class="section method" id="methode" aria-labelledby="method-title">
+  <div class="container">
+    <SectionHeading
+      eyebrow="La méthode MIG"
+      title="MIG ne vend pas quatre prestations séparées.<br /><span class=&quot;accent&quot;>MIG pilote la chaîne entière.</span>"
+      lead="Un freelance sur les Ads, une agence sur le site, personne sur l’email : le CA plafonne. Ici, un seul pilote sur les quatre leviers."
+      align="center"
+    />
+
+    <ol class="pipeline reveal" aria-label="Les quatre leviers alimentent le revenu">
+      {methodSteps.map((s) => (
+        <li class="pipeline__step"><span class="pipeline__idx num">{s.index}</span>{s.key}<Icon name="arrow" size={14} class="pipeline__arrow" /></li>
+      ))}
+      <li class="pipeline__step pipeline__step--end">Chiffre d’affaires</li>
+    </ol>
+
+    <ol class="mgrid">
+      {methodSteps.map((s, i) => (
+        <li class="mcard reveal" data-delay={String(i + 1)}>
+          <figure class="mcard__proof">
+            <Image src={s.proof.image} alt={s.proof.alt} width={560} format="webp" loading="lazy" />
+            <figcaption>{s.proof.caption}</figcaption>
+          </figure>
+          <div class="mcard__body">
+            <p class="mcard__head"><span class="mcard__idx num">{s.index}</span><span class="mcard__key">{s.key}</span></p>
+            <h3 class="mcard__title">{s.title}</h3>
+            <p class="mcard__desc">{s.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+<style>
+  .method { background: #fff; border-block: 1px solid var(--c-border); }
+  .pipeline { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.5rem; margin: -0.5rem auto 2.5rem; }
+  .pipeline__step {
+    display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; padding: 0 0.9rem 0 0.7rem;
+    border-radius: 12px; border: 1px solid var(--c-border-strong); background: var(--c-bg);
+    font-weight: 600; font-size: 0.8125rem; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .pipeline__idx { font-size: 0.7rem; color: var(--c-ink-3); letter-spacing: 0.04em; }
+  .pipeline__arrow { color: var(--c-ink-3); margin-left: 0.15rem; }
+  .pipeline__step--end { background: var(--c-blue); border-color: var(--c-blue); color: #fff; padding-inline: 1rem; }
+  .mgrid { display: grid; gap: 1rem; }
+  .mcard { display: flex; flex-direction: column; border: 1px solid var(--c-border); border-radius: var(--r-lg); background: var(--c-bg); overflow: hidden; }
+  .mcard__proof { margin: 0; background: var(--c-surface-2); border-bottom: 1px solid var(--c-border); }
+  .mcard__proof img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+  .mcard__proof figcaption { font-size: 0.7rem; color: var(--c-ink-3); padding: 0.4rem 0.9rem; background: #fff; border-top: 1px solid var(--c-border); }
+  .mcard__body { display: grid; gap: 0.5rem; padding: 1.1rem 1.15rem 1.25rem; }
+  .mcard__head { display: flex; align-items: baseline; gap: 0.6rem; }
+  .mcard__idx { font-weight: 700; color: var(--c-blue-text); }
+  .mcard__key { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; font-weight: 600; color: var(--c-ink-3); }
+  .mcard__title { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.015em; }
+  .mcard__desc { font-size: 0.9375rem; color: var(--c-ink-2); line-height: 1.55; }
+  @media (max-width: 599px) {
+    .mcard { display: grid; grid-template-columns: 112px minmax(0, 1fr); align-items: start; }
+    .mcard__proof { border-bottom: 0; border-right: 1px solid var(--c-border); height: 100%; }
+    .mcard__proof img { aspect-ratio: 1 / 1; height: 100%; }
+    .mcard__proof figcaption { display: none; }
+    .mcard__body { padding: 0.9rem 1rem 1rem; gap: 0.35rem; }
+    .mcard__title { font-size: 1rem; }
+    .mcard__desc { font-size: 0.875rem; }
+    .pipeline__arrow { display: none; }
+  }
+  @media (min-width: 600px) { .mgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .mgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; } }
+</style>

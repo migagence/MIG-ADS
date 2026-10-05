@@ -1,0 +1,76 @@
+---
+/**
+ * Rangée « Nous sommes partenaires de » (structure amailzing.fr) : Klaviyo, Shopify Partner,
+ * Meta Business Partner, Kanal et le badge officiel Google Partner (G au-dessus du texte).
+ */
+import klaviyo from '../assets/partners/klaviyo.svg?raw';
+import shopify from '../assets/partners/shopify.svg?raw';
+import kanal from '../assets/partners/kanal.svg?raw';
+import googleG from '../assets/partners/google-g.svg?raw';
+import metaIcon from '../assets/partners/meta-icon.svg?raw';
+interface Props { theme?: 'dark' | 'light'; class?: string }
+const { theme = 'light', class: className } = Astro.props;
+---
+<div class:list={['partners', `partners--${theme}`, className]}>
+  <p class="partners__label">Nous sommes partenaires de</p>
+  <ul class="partners__list" aria-label="Partenaires certifiés">
+    <li class="partners__item partners__item--klaviyo"><span role="img" aria-label="Klaviyo" set:html={klaviyo} /></li>
+    <li class="partners__item partners__item--shopify"><span role="img" aria-label="Shopify Partner" set:html={shopify} /></li>
+    <li class="partners__item partners__item--meta">
+      <span class="partners__meta" role="img" aria-label="Meta Business Partner">
+        <span class="partners__meta-icon" aria-hidden="true" set:html={metaIcon} />
+        <span class="partners__meta-text" aria-hidden="true"><strong>Meta</strong><small>Business Partner</small></span>
+      </span>
+    </li>
+    <li class="partners__item partners__item--kanal"><span role="img" aria-label="Kanal" set:html={kanal} /></li>
+    <li class="partners__item partners__badge">
+      <span class="partners__badge-inner" role="img" aria-label="Google Partner">
+        <span class="partners__g" aria-hidden="true" set:html={googleG} />
+        <span class="partners__badge-text" aria-hidden="true">Google Partner</span>
+      </span>
+    </li>
+  </ul>
+</div>
+<style>
+  .partners { display: grid; gap: 1.25rem; justify-items: center; text-align: center; }
+  .partners__label { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .partners__list { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.25rem 2.75rem; }
+  .partners__item { display: inline-flex; align-items: center; height: 30px; }
+  .partners__item > span { display: inline-flex; height: 100%; }
+  .partners__item :global(svg) { height: 100%; width: auto; display: block; }
+  .partners__item--klaviyo :global(svg) { height: 24px; }
+  .partners__item--shopify :global(svg) { height: 30px; }
+  .partners__item--kanal :global(svg) { height: 24px; }
+  .partners__meta { display: inline-flex; align-items: center; gap: 0.45rem; height: 100%; }
+  .partners__meta-icon { display: inline-flex; width: 30px; height: 30px; }
+  .partners__meta-icon :global(svg) { width: 30px; height: 30px; }
+  .partners__meta-text { display: grid; line-height: 1; text-align: left; }
+  .partners__meta-text strong { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+  .partners__meta-text small { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.02em; }
+  .partners__badge { height: auto; }
+  .partners__badge-inner { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.2rem; }
+  .partners__g { display: inline-flex; width: 34px; height: 34px; }
+  .partners__g :global(svg) { width: 34px; height: 34px; }
+  .partners__badge-text { font-size: 0.8125rem; font-weight: 500; letter-spacing: -0.01em; line-height: 1; }
+
+  /* Thème clair (section blanche) */
+  .partners--light .partners__label { color: var(--c-ink-3); }
+  .partners--light .partners__list { color: #03051a; }
+  .partners--light .partners__meta-text { color: #03051a; }
+  .partners--light .partners__badge-text { color: #5f6368; }
+
+  /* Thème sombre (fond bleu nuit) */
+  .partners--dark .partners__label { color: rgba(255, 255, 255, 0.5); }
+  .partners--dark .partners__list { color: #fff; }
+  .partners--dark .partners__meta-text { color: #fff; }
+  .partners--dark .partners__badge-text { color: rgba(255, 255, 255, 0.85); }
+
+  @media (max-width: 640px) {
+    .partners__list { gap: 1rem 1.75rem; }
+    .partners__item--klaviyo :global(svg) { height: 20px; }
+    .partners__item--shopify :global(svg) { height: 26px; }
+    .partners__item--kanal :global(svg) { height: 20px; }
+    .partners__meta-icon, .partners__meta-icon :global(svg) { width: 26px; height: 26px; }
+    .partners__g, .partners__g :global(svg) { width: 28px; height: 28px; }
+  }
+</style>

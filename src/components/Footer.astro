@@ -1,0 +1,34 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logos/mig-logo-white.png';
+import { site, trust } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <a href="#top" class="footer__logo" aria-label="MIG, retour en haut de page">
+        <Image src={logo} alt="MIG" height={22} width={52} densities={[1, 2, 3]} format="png" loading="lazy" />
+      </a>
+      <nav class="footer__nav" aria-label="Liens secondaires">
+        <a href="/mentions-legales">Mentions légales</a>
+        <a href="/confidentialite">Politique de confidentialité</a>
+        <a href={trust.trustpilotUrl} target="_blank" rel="noopener" data-track="trustpilot_click">Avis Trustpilot</a>
+        <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
+      </nav>
+    </div>
+    <p class="footer__legal">Ce site ne fait pas partie du site web de Facebook™ ou de Facebook™ Inc. De plus, ce site n’est PAS approuvé par Facebook™ de quelque manière que ce soit. FACEBOOK™ est une marque déposée de FACEBOOK™, Inc.</p>
+    <p class="footer__copy">© {year} {site.legalName}. Tous droits réservés.</p>
+  </div>
+</footer>
+<style>
+  .footer { background: var(--c-night); color: var(--c-night-ink); border-top: 1px solid rgba(255, 255, 255, 0.08); padding-block: 2.5rem; font-size: 0.875rem; }
+  .footer__top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.25rem 2rem; }
+  .footer__logo { display: inline-flex; min-height: 44px; align-items: center; }
+  .footer__logo img { height: 22px; width: auto; }
+  .footer__nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+  .footer__nav a { min-height: 44px; display: inline-flex; align-items: center; transition: color var(--dur) var(--ease); }
+  .footer__nav a:hover { color: #fff; }
+  .footer__legal { margin-top: 1.5rem; font-size: 0.75rem; color: rgba(201, 207, 242, 0.7); max-width: 80ch; line-height: 1.5; }
+  .footer__copy { margin-top: 0.75rem; }
+</style>

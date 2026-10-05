@@ -1,0 +1,129 @@
+---
+/** Études de cas en dropdowns (structure « Avant et après le système CNR » d’amailzing.fr). */
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import CtaButton from './CtaButton.astro';
+import TrustpilotStars from './TrustpilotStars.astro';
+import { caseStudies, caseStudiesDisclaimer } from '../data/caseStudies';
+import { booking } from '../data/site';
+---
+<section class="section cases" id="resultats" aria-labelledby="cases-title">
+  <div class="container cases__inner">
+    <p class="eyebrow eyebrow--light eyebrow--center reveal">Études de cas</p>
+    <h2 class="h2 cases__title reveal" id="cases-title" data-delay="1">Avant et après<br />le système MIG.</h2>
+    <p class="lead cases__lead reveal" data-delay="2">Un système sur mesure que nous adaptons à chaque niche.</p>
+
+    <div class="acc reveal" data-delay="2">
+      {caseStudies.map((c) => {
+        const panelId = `case-${c.id}-panel`;
+        const logoH = Math.min(c.logoHeight, 22);
+        const logoW = Math.round((c.logo.width * logoH) / c.logo.height);
+        return (
+          <article class="acc__item" id={`case-${c.id}`}>
+            <button type="button" class="acc__head" aria-expanded="false" aria-controls={panelId} data-case-toggle data-case={c.id}>
+              <span class="acc__brand"><Image src={c.logo} alt={c.brand} height={logoH * 2} width={logoW * 2} format="png" loading="lazy" /></span>
+              <span class="acc__text">
+                <span class="acc__meta">{c.niche} · {c.before}/mois</span>
+                <strong class="acc__headline">{c.headline}</strong>
+              </span>
+              <span class="acc__chevron" aria-hidden="true"><Icon name="chevron" size={18} /></span>
+            </button>
+            <div class="acc__panel" id={panelId} inert>
+              <div class="acc__body">
+                <div class="acc__top">
+                  <p class="acc__big"><span class="acc__before num">{c.before}</span><Icon name="arrow" size={22} /><strong class="num">{c.after}<small>{c.unit}</small></strong></p>
+                  {c.metrics && (
+                    <ul class="acc__metrics">
+                      {c.metrics.map((m) => <li><strong class="num">{m.value}</strong><span>{m.label}</span></li>)}
+                    </ul>
+                  )}
+                </div>
+                <p class="acc__story">{c.story}</p>
+                <p class="acc__tags"><span class="acc__tag">Système MIG</span>{c.levers.map((l) => <span class="acc__tag">{l}</span>)}</p>
+                {c.screens && c.screens.length > 0 && (
+                  <div class="acc__screens">
+                    {c.screens.map((s) => (
+                      <figure class="acc__screen"><Image src={s.image} alt={s.alt} width={640} format="webp" loading="lazy" /><figcaption>{s.label}</figcaption></figure>
+                    ))}
+                  </div>
+                )}
+                {c.review && (
+                  <figure class="acc__review">
+                    <span class="acc__verified"><Icon name="check" size={14} /> Avis vérifié <TrustpilotStars size={12} /></span>
+                    <blockquote><p>« {c.review.quote} »</p></blockquote>
+                    <figcaption><strong>{c.review.name}</strong> · {c.review.role}</figcaption>
+                  </figure>
+                )}
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <div class="cases__cta reveal">
+      <CtaButton label="Obtenir mon diagnostic gratuit" track="results_cta_click" onDark sub={booking.microcopy} />
+      <p class="cases__note">{caseStudiesDisclaimer}</p>
+    </div>
+  </div>
+</section>
+<style>
+  .cases { background: var(--c-night); color: #fff; position: relative; overflow: hidden; }
+  .cases::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(50% 40% at 50% 0%, rgba(8, 73, 250, 0.18), transparent 70%); }
+  .cases__inner { position: relative; display: grid; justify-items: center; text-align: center; gap: 1rem; }
+  .cases__title { color: #fff; }
+  .cases__lead { color: var(--c-night-ink); }
+  .acc { width: 100%; max-width: 920px; display: grid; gap: 0.75rem; margin-top: 1.5rem; text-align: left; }
+  .acc__item { border: 1px solid var(--c-night-border); border-radius: 20px; background: var(--c-night-surface); overflow: hidden; transition: border-color var(--dur) var(--ease); }
+  .acc__item:hover { border-color: rgba(255, 255, 255, 0.24); }
+  .acc__head { display: grid; grid-template-columns: auto minmax(0, 1fr) 44px; align-items: center; gap: 1rem; width: 100%; padding: 1rem 1.1rem 1rem 1rem; text-align: left; color: #fff; }
+  .acc__brand { display: grid; place-items: center; min-width: 56px; max-width: 132px; height: 56px; border-radius: 14px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--c-night-border); overflow: hidden; padding: 0.5rem 0.8rem; }
+  .acc__brand img { width: auto; height: auto; max-width: 110px; max-height: 26px; }
+  .acc__text { display: grid; gap: 0.25rem; min-width: 0; }
+  .acc__meta { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-night-ink); font-variant-numeric: tabular-nums; }
+  .acc__headline { font-size: clamp(1.0625rem, 1rem + 0.5vw, 1.25rem); font-weight: 600; letter-spacing: -0.015em; }
+  .acc__chevron { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--c-night-border); display: grid; place-items: center; color: #fff; transition: transform var(--dur) var(--ease), background var(--dur) var(--ease); }
+  .acc__head[aria-expanded='true'] .acc__chevron { transform: rotate(180deg); background: var(--c-blue); border-color: var(--c-blue); }
+  .acc__panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease); }
+  .acc__panel > .acc__body { overflow: hidden; }
+  .acc__panel.is-open { grid-template-rows: 1fr; }
+  .acc__body { display: grid; gap: 1.1rem; padding: 0 1.1rem; }
+  .acc__panel.is-open .acc__body { padding: 0.25rem 1.1rem 1.5rem; }
+  .acc__top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem 2rem; padding-top: 0.5rem; border-top: 1px solid var(--c-night-border); }
+  .acc__big { display: inline-flex; align-items: baseline; gap: 0.6rem; font-weight: 700; letter-spacing: -0.045em; line-height: 1; padding-top: 0.75rem; }
+  .acc__big svg { align-self: center; color: var(--c-night-ink); }
+  .acc__before { font-size: 1.375rem; color: var(--c-night-ink); font-weight: 600; white-space: nowrap; }
+  .acc__big strong { font-size: clamp(2.5rem, 2rem + 2vw, 3.75rem); color: #fff; }
+  .acc__big small { font-size: 1rem; font-weight: 500; color: var(--c-night-ink); margin-left: 0.25rem; letter-spacing: 0; }
+  .acc__metrics { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+  .acc__metrics li { display: grid; gap: 0.1rem; }
+  .acc__metrics strong { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+  .acc__metrics span { font-size: 0.8125rem; color: var(--c-night-ink); }
+  .acc__story { color: var(--c-night-ink); max-width: 68ch; }
+  .acc__tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .acc__tag { display: inline-flex; align-items: center; min-height: 30px; padding: 0 0.7rem; border-radius: var(--r-pill); font-size: 0.8125rem; font-weight: 500; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--c-night-border); color: var(--c-night-ink); }
+  .acc__tag:first-child { background: var(--c-blue); border-color: var(--c-blue); color: #fff; font-weight: 600; }
+  .acc__screens { display: grid; gap: 0.75rem; }
+  .acc__screen { margin: 0; border-radius: 14px; overflow: hidden; border: 1px solid var(--c-night-border); background: rgba(255, 255, 255, 0.04); }
+  .acc__screen img { width: 100%; height: auto; display: block; max-height: 420px; object-fit: cover; object-position: top; }
+  .acc__screen figcaption { font-size: 0.75rem; color: var(--c-night-ink); padding: 0.5rem 0.75rem; }
+  .acc__screen--todo { aspect-ratio: 16 / 9; display: grid; place-content: center; justify-items: center; gap: 0.25rem; border-style: dashed; color: var(--c-night-ink); }
+  .acc__screen--todo span { font-weight: 600; color: #fff; }
+  .acc__screen--todo small { font-size: 0.75rem; }
+  .acc__review { display: grid; gap: 0.6rem; padding: 1.1rem 1.2rem; border-radius: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--c-night-border); }
+  .acc__verified { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; font-weight: 600; color: #fff; }
+  .acc__verified svg:first-child { color: var(--c-tp); }
+  .acc__review blockquote p { font-size: 0.9375rem; line-height: 1.55; color: #fff; }
+  .acc__review figcaption { font-size: 0.8125rem; color: var(--c-night-ink); }
+  .acc__review figcaption strong { color: #fff; }
+  .cases__cta { display: grid; justify-items: center; gap: 0.9rem; margin-top: 1.5rem; }
+  .cases__note { font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); max-width: 64ch; }
+  @media (min-width: 640px) { .acc__screens { grid-template-columns: repeat(2, minmax(0, 1fr)); } .acc__screen:nth-child(3):last-child { grid-column: 1 / -1; } }
+  @media (max-width: 480px) {
+    .acc__head { grid-template-columns: auto minmax(0, 1fr) 36px; gap: 0.75rem; padding: 0.9rem; }
+    .acc__brand { min-width: 44px; max-width: 96px; height: 44px; border-radius: 12px; padding: 0.4rem 0.6rem; }
+    .acc__brand img { max-width: 80px; max-height: 20px; }
+    .acc__chevron { width: 36px; height: 36px; }
+    .acc__headline { font-size: 1rem; }
+  }
+</style>

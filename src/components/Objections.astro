@@ -1,0 +1,37 @@
+---
+import Icon from './Icon.astro';
+import { faq } from '../data/faq';
+---
+<section class="section section--tight obj" id="questions" aria-labelledby="obj-title">
+  <div class="container obj__grid">
+    <div class="obj__heading reveal">
+      <p class="eyebrow">Avant de commencer</p>
+      <h2 class="h2" id="obj-title">Les questions qu’on nous pose.</h2>
+    </div>
+    <div class="obj__list reveal" data-delay="1">
+      {faq.map((item, i) => (
+        <details class="faq" data-faq={String(i + 1)}>
+          <summary>
+            <span>{item.q}</span>
+            <span class="faq__icon" aria-hidden="true"><Icon name="plus" size={16} /></span>
+          </summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+<style>
+  .obj { background: #fff; border-top: 1px solid var(--c-border); }
+  .obj__grid { display: grid; gap: 1.5rem; }
+  .obj__heading { display: grid; gap: 0.9rem; max-width: 460px; }
+  .faq { border-top: 1px solid var(--c-border); }
+  .faq:last-child { border-bottom: 1px solid var(--c-border); }
+  .faq summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 0; font-weight: 600; font-size: 1.0625rem; cursor: pointer; min-height: 52px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary:hover { color: var(--c-blue-text); }
+  .faq__icon { width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--c-border-strong); display: grid; place-items: center; flex: none; color: var(--c-ink-2); transition: transform var(--dur) var(--ease), background var(--dur) var(--ease), color var(--dur) var(--ease); }
+  .faq[open] .faq__icon { transform: rotate(45deg); background: var(--c-blue); border-color: var(--c-blue); color: #fff; }
+  .faq p { padding: 0 0 1.1rem; color: var(--c-ink-2); max-width: 64ch; font-size: 0.9375rem; }
+  @media (min-width: 1024px) { .obj__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; align-items: start; } }
+</style>

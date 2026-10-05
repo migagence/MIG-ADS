@@ -1,0 +1,15 @@
+---
+interface Props { eyebrow?: string; title: string; lead?: string; align?: 'left' | 'center'; light?: boolean; class?: string }
+const { eyebrow, title, lead, align = 'left', light = false, class: className } = Astro.props;
+---
+<div class:list={['sh', `sh--${align}`, light && 'sh--light', className, 'reveal']}>
+  {eyebrow && <p class:list={['eyebrow', light && 'eyebrow--light']}>{eyebrow}</p>}
+  <h2 class="h2 sh__title" set:html={title} />
+  {lead && <p class="lead sh__lead">{lead}</p>}
+</div>
+<style>
+  .sh { display: grid; gap: 1rem; max-width: 760px; margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+  .sh--center { margin-inline: auto; text-align: center; justify-items: center; }
+  .sh--light .sh__title { color: #fff; }
+  .sh--light .sh__lead { color: var(--c-night-ink); }
+</style>

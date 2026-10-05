@@ -1,0 +1,27 @@
+---
+import Base from './Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BookingModal from '../components/BookingModal.astro';
+interface Props { title: string; path: string }
+const { title, path } = Astro.props;
+---
+<Base title={`${title} | MIG`} description={`${title} du site MIG.`} path={path} noindex>
+  <Header solid />
+  <main id="main" class="legal">
+    <div class="container legal__inner">
+      <h1 class="h2">{title}</h1>
+      <slot />
+    </div>
+  </main>
+  <Footer />
+  <BookingModal />
+</Base>
+<style is:global>
+  .legal { padding-block: clamp(48px, 7vw, 96px); }
+  .legal__inner { max-width: 760px; display: grid; gap: 1.5rem; }
+  .legal h2 { font-size: 1.25rem; font-weight: 600; margin-top: 0.5rem; }
+  .legal p, .legal li { color: var(--c-ink-2); }
+  .legal ul { display: grid; gap: 0.5rem; padding-left: 1.2rem; list-style: disc; }
+  .legal .todo { padding: 1rem 1.25rem; border-radius: var(--r-md); background: var(--c-tint); border: 1px solid var(--c-tint-2); color: var(--c-ink); font-size: 0.9375rem; }
+</style>

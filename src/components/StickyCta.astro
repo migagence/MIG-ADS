@@ -1,0 +1,23 @@
+---
+import CtaButton from './CtaButton.astro';
+import { booking } from '../data/site';
+---
+<div class="sticky-cta" data-sticky-cta aria-hidden="true">
+  <CtaButton label="Réserver mon diagnostic gratuit" track="sticky_cta_click" block />
+  <p class="microcopy">{booking.microcopy}</p>
+</div>
+<style>
+  .sticky-cta {
+    position: fixed; inset-inline: 0; bottom: 0; z-index: 40;
+    display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+    padding: 0.7rem var(--gutter) calc(0.7rem + env(safe-area-inset-bottom, 0px));
+    background: rgba(252, 252, 252, 0.95); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    border-top: 1px solid var(--c-border); box-shadow: 0 -8px 24px -12px rgba(11, 16, 51, 0.18);
+    transform: translateY(110%); transition: transform 0.3s var(--ease); visibility: hidden;
+  }
+  .sticky-cta.is-visible { transform: none; visibility: visible; }
+  .sticky-cta .btn { width: 100%; min-height: 52px; }
+  .sticky-cta .microcopy { font-size: 0.75rem; }
+  @media (min-width: 900px) { .sticky-cta { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .sticky-cta { transition: none; } }
+</style>

@@ -1,0 +1,48 @@
+---
+/**
+ * CTA principal. Rendu en lien vers Calendly (fonctionne sans JS),
+ * intercepté par booking.ts pour ouvrir le modal.
+ */
+import Icon from './Icon.astro';
+import { booking } from '../data/site';
+import { ctaVariants } from '../data/experiments';
+
+interface Props {
+  label?: string;
+  /** Rend les deux variantes du test C (CTA) ; la bonne est affichée via CSS. */
+  abLabel?: boolean;
+  short?: string;
+  variant?: 'primary' | 'secondary';
+  size?: 'sm' | 'md' | 'lg';
+  track: string;
+  onDark?: boolean;
+  block?: boolean;
+  /** Microcopy affichée dans le bouton, sous le libellé (style amailzing). */
+  sub?: string;
+  class?: string;
+}
+const { label, abLabel = false, short, variant = 'primary', size = 'md', track, onDark = false, block = false, sub, class: className } = Astro.props;
+---
+<a
+  href={booking.calendlyUrl}
+  target="_blank"
+  rel="noopener"
+  class:list={['btn', `btn--${variant}`, size !== 'md' && `btn--${size}`, onDark && 'btn--on-dark', block && 'btn--block', short && 'btn--responsive', sub && 'btn--stacked', className]}
+  data-book
+  data-track={track}
+>
+  {abLabel ? (
+    <>
+      <span data-exp="cta" data-variant="A">{ctaVariants.A}</span>
+      <span data-exp="cta" data-variant="B">{ctaVariants.B}</span>
+    </>
+  ) : short ? (
+    <>
+      <span class="btn__long">{label ?? ctaVariants.A}</span>
+      <span class="btn__short">{short}</span>
+    </>
+  ) : (
+    <span>{label ?? ctaVariants.A}</span>
+  )}
+  {sub ? <small>{sub}</small> : <Icon name="arrow" class="btn__icon" />}
+</a>

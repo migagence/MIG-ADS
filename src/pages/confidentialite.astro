@@ -1,0 +1,13 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site } from '../data/site';
+---
+<Legal title="Politique de confidentialité" path="/confidentialite">
+  <p class="todo">TODO MIG : faire valider cette page (responsable de traitement, durées de conservation, outils de mesure réellement activés) avant mise en ligne.</p>
+  <h2>Données collectées</h2>
+  <p>La prise de rendez-vous s’effectue via Calendly. Les informations saisies (nom, email, réponses aux questions de préparation) servent uniquement à organiser et préparer le diagnostic.</p>
+  <h2>Mesure d’audience et publicité</h2>
+  <p>Le site est préparé pour transmettre des événements de navigation à des outils de mesure (Google Tag Manager, pixel Meta). Ces outils ne sont activés qu’avec votre consentement.</p>
+  <h2>Vos droits</h2>
+  <p>Vous pouvez demander l’accès, la rectification ou la suppression de vos données en écrivant à <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
+</Legal>

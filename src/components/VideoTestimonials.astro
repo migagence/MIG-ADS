@@ -1,0 +1,102 @@
+---
+/** Section « 3 vidéos témoignages » (structure amailzing.fr) : étoiles Trustpilot + citation sur la vidéo. */
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import TrustpilotStars from './TrustpilotStars.astro';
+import Partners from './Partners.astro';
+import { videoTestimonials } from '../data/videoTestimonials';
+import { proofScreens } from '../data/proofScreens';
+import { trust } from '../data/site';
+import avatar1 from '../assets/people/jean-christophe-gadrat.png';
+import avatar2 from '../assets/people/mariam-gassama.png';
+import avatar3 from '../assets/people/sandrine-wagner.png';
+import avatar4 from '../assets/people/mouna-lascar.png';
+const avatars = [avatar1, avatar2, avatar3, avatar4];
+const screens = [...proofScreens, ...proofScreens];
+---
+<section class="section vt" id="temoignages" aria-labelledby="vt-title">
+  <div class="container vt__inner">
+    <Partners theme="light" class="vt__partners reveal" />
+    <a href={trust.trustpilotUrl} target="_blank" rel="noopener" class="vt__tp reveal" data-track="trustpilot_click">
+      <TrustpilotStars size={18} /><span><strong>{trust.rating}/5</strong> sur Trustpilot</span>
+    </a>
+    <h2 class="h2 reveal" id="vt-title" data-delay="1">Ils ont commencé par le diagnostic.</h2>
+    <p class="lead reveal" data-delay="2">Voici ce que ça a changé pour eux.</p>
+    <p class="vt__count reveal" data-delay="2">
+      <span class="vt__avatars" aria-hidden="true">{avatars.map((a) => <Image src={a} alt="" width={64} height={64} format="webp" loading="lazy" />)}</span>
+      <span><strong>{trust.brandsCount}</strong> marques accompagnées</span>
+    </p>
+
+    <ul class="vt__grid">
+      {videoTestimonials.map((t, i) => (
+        <li class="vcard reveal" data-delay={String(i + 1)} data-vt={t.id}>
+          <div class="vcard__media">
+            <Image src={t.poster} alt={`Témoignage vidéo : ${t.name}, ${t.company}`} width={720} height={1280} format="webp" loading="lazy" class="vcard__poster" />
+            {t.video ? (
+              <button type="button" class="vcard__play" data-vt-play data-src={t.video.src} data-type={t.video.type} aria-label={`Lire le témoignage vidéo : ${t.name}, ${t.company}`}><Icon name="play" size={26} /></button>
+            ) : (
+              <span class="vcard__soon">Vidéo en cours de mise en ligne</span>
+            )}
+          </div>
+          <figure class="vcard__quote">
+            {t.quote && <TrustpilotStars size={14} />}
+            {t.quote && <blockquote><p>« {t.quote} »</p></blockquote>}
+            <figcaption><strong>{t.name}</strong> · {t.company}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="proofwall reveal" aria-label="Captures d’avis publiés sur Trustpilot">
+    <div class="proofwall__track">
+      {screens.map((s, i) => (
+        <Image src={s.image} alt={i < proofScreens.length ? s.alt : ''} aria-hidden={i >= proofScreens.length ? 'true' : undefined} height={300} format="webp" loading="lazy" class="proofwall__item" />
+      ))}
+    </div>
+  </div>
+</section>
+<style>
+  .vt { padding-bottom: 0; overflow: hidden; background: var(--c-bg); }
+  .vt__inner { display: grid; justify-items: center; text-align: center; gap: 1rem; }
+  .vt :global(.vt__partners) { width: 100%; padding-bottom: clamp(1.5rem, 3vw, 2.5rem); margin-bottom: clamp(1rem, 2vw, 1.5rem); border-bottom: 1px solid var(--c-border); }
+  .vt__tp { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.9375rem; color: var(--c-ink-2); min-height: 36px; }
+  .vt__tp strong { color: var(--c-ink); }
+  .vt__count { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.9375rem; color: var(--c-ink-2); }
+  .vt__avatars { display: inline-flex; }
+  .vt__avatars :global(img) { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--c-bg); object-fit: cover; margin-left: -8px; background: var(--c-surface-2); }
+  .vt__avatars :global(img:first-child) { margin-left: 0; }
+  .vt__grid { width: 100%; display: grid; gap: 1rem; margin-top: 1.5rem; }
+  .vcard { position: relative; border-radius: var(--r-lg); overflow: hidden; background: var(--c-night); color: #fff; aspect-ratio: 9 / 13; box-shadow: var(--shadow-2); }
+  .vcard__media { position: absolute; inset: 0; }
+  .vcard__media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .vcard__media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(3, 5, 26, 0.92) 0%, rgba(3, 5, 26, 0.35) 45%, transparent 70%); }
+  .vcard__play {
+    position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 2;
+    width: 64px; height: 64px; border-radius: 50%; background: rgba(255, 255, 255, 0.92); color: var(--c-blue); display: grid; place-items: center;
+    box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.5); transition: transform var(--dur) var(--ease);
+  }
+  .vcard__play svg { margin-left: 3px; }
+  .vcard__play:hover { transform: translate(-50%, -50%) scale(1.06); }
+  .vcard__soon { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 2; padding: 0.45rem 0.9rem; border-radius: var(--r-pill); background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); font-size: 0.75rem; color: var(--c-night-ink); white-space: nowrap; }
+  .vcard__quote { position: absolute; inset: auto 0 0 0; z-index: 2; display: grid; justify-items: center; gap: 0.5rem; padding: 1.25rem 1.1rem 1.25rem; text-align: center; }
+  .vcard__quote blockquote p { font-size: 0.9375rem; line-height: 1.45; color: #fff; text-wrap: pretty; }
+  .vcard__quote figcaption { font-size: 0.75rem; color: var(--c-night-ink); }
+  .vcard__quote figcaption strong { color: #fff; font-weight: 600; }
+  .vcard :global(video) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 3; background: #000; }
+  .proofwall { margin-top: clamp(2rem, 4vw, 3rem); padding-block: 1.25rem; border-top: 1px solid var(--c-border); background: #fff; }
+  .proofwall__track { display: flex; gap: 1rem; width: max-content; animation: proof-scroll 60s linear infinite; }
+  .proofwall:hover .proofwall__track { animation-play-state: paused; }
+  .proofwall__item { height: 150px; width: auto; border-radius: 12px; border: 1px solid var(--c-border); box-shadow: var(--shadow-1); }
+  @keyframes proof-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (min-width: 640px) { .vt__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; max-width: 1080px; } .vcard { aspect-ratio: 9 / 14; } }
+  @media (max-width: 639px) {
+    .vt__grid { grid-auto-flow: column; grid-auto-columns: min(78vw, 320px); overflow-x: auto; scroll-snap-type: x mandatory; padding: 0.25rem var(--gutter) 0.75rem; margin-inline: calc(-1 * var(--gutter)); scrollbar-width: none; justify-items: stretch; }
+    .vt__grid::-webkit-scrollbar { display: none; }
+    .vt__grid > :global(*) { scroll-snap-align: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .proofwall__track { animation: none; width: auto; flex-wrap: wrap; justify-content: center; padding-inline: var(--gutter); }
+    .proofwall__track :global(img[aria-hidden='true']) { display: none; }
+  }
+</style>

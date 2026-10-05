@@ -1,0 +1,141 @@
+---
+import { Image } from 'astro:assets';
+import CtaButton from './CtaButton.astro';
+import Icon from './Icon.astro';
+import TrustpilotStars from './TrustpilotStars.astro';
+import VideoFacade from './VideoFacade.astro';
+import { booking, trust } from '../data/site';
+import { headlineVariants } from '../data/experiments';
+import { clientLogos } from '../data/clients';
+import avatar1 from '../assets/people/jean-christophe-gadrat.png';
+import avatar2 from '../assets/people/mariam-gassama.png';
+import avatar3 from '../assets/people/sandrine-wagner.png';
+import avatar4 from '../assets/people/mouna-lascar.png';
+const avatars = [avatar1, avatar2, avatar3, avatar4];
+---
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="container hero__inner">
+    <p class="pill hero__pill">Agence growth e-commerce · <strong>{trust.brandsCount} marques accompagnées</strong></p>
+    <h1 class="h1 hero__title" id="hero-title">
+      <span data-exp="headline" data-variant="A">{headlineVariants.A.title}</span>
+      <span data-exp="headline" data-variant="B">{headlineVariants.B.title}</span>
+    </h1>
+    <p class="lead hero__lead">
+      <span data-exp="headline" data-variant="A">{headlineVariants.A.lead}</span>
+      <span data-exp="headline" data-variant="B">{headlineVariants.B.lead}</span>
+    </p>
+
+    <div class="hero__media"><VideoFacade /></div>
+
+    <div class="hero__cta">
+      <CtaButton abLabel size="lg" track="hero_cta_click" onDark sub={`${booking.microcopy} · ${booking.durationMinutes} min`} />
+      <!-- Mini section Trustpilot sous le CTA (structure amailzing.fr). -->
+      <a href={trust.trustpilotUrl} target="_blank" rel="noopener" class="hero__social" data-track="trustpilot_click">
+        <span class="hero__avatars" aria-hidden="true">
+          {avatars.map((a) => <Image src={a} alt="" width={64} height={64} format="webp" loading="eager" />)}
+        </span>
+        <TrustpilotStars size={16} />
+        <span class="hero__social-text"><strong>{trust.rating}/5</strong> sur Trustpilot · <strong>{trust.brandsCount}</strong> marques accompagnées</span>
+      </a>
+      <a href="#case-joia-paris" class="hero__chip" data-exp="heroProof" data-variant="case" data-track="hero_proof_click">
+        <span class="num">4K€ <Icon name="arrow" size={14} /> 250K€<small>/mois</small></span><span>marque de mode · Joia Paris</span>
+      </a>
+    </div>
+
+    <ul class="hero__kpis" aria-label="Chiffres clés">
+      <li class="kpi">
+        <span class="kpi__value num" data-count="180" data-prefix="+">{trust.brandsCount}</span>
+        <span class="kpi__label">marques e-commerce accompagnées</span>
+      </li>
+      <li class="kpi">
+        <span class="kpi__value num" data-count="6" data-prefix="×">×6</span>
+        <span class="kpi__label">de CA sur certains cas</span>
+      </li>
+      <li class="kpi">
+        <span class="kpi__value num" data-count="4.7" data-decimals="1" data-suffix="/5">4,7/5</span>
+        <span class="kpi__label"><TrustpilotStars size={14} /> sur Trustpilot</span>
+      </li>
+    </ul>
+    <div class="hero__logos">
+      <p class="hero__logos-label">Ils nous font confiance</p>
+      <div class="marquee" aria-label="Marques accompagnées par MIG">
+        <ul class="marquee__track">
+          {[...clientLogos, ...clientLogos].map((l, i) => (
+            <li aria-hidden={i >= clientLogos.length ? 'true' : undefined}>
+              <Image
+                src={l.image}
+                alt={i < clientLogos.length ? l.name : ''}
+                height={l.height * 2}
+                width={Math.round((l.image.width * l.height * 2) / l.image.height)}
+                format="png"
+                loading="lazy"
+                style={`height:${l.height}px;width:auto`}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .hero {
+    position: relative; overflow: hidden; color: #fff; background: var(--c-night);
+    margin-top: calc(-1 * var(--header-h)); padding-top: calc(var(--header-h) + clamp(40px, 6vw, 80px)); padding-bottom: clamp(48px, 6vw, 80px);
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(55% 40% at 50% 0%, rgba(8, 73, 250, 0.28), transparent 70%),
+      radial-gradient(40% 40% at 90% 70%, rgba(40, 149, 247, 0.1), transparent 70%);
+  }
+  .hero::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.35;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 64px 64px; mask-image: radial-gradient(70% 55% at 50% 30%, #000, transparent);
+    -webkit-mask-image: radial-gradient(70% 55% at 50% 30%, #000, transparent);
+  }
+  .hero__inner { position: relative; display: grid; justify-items: center; text-align: center; gap: 1.25rem; }
+  .hero__title { color: #fff; max-width: 900px; font-size: clamp(2.75rem, 1.8rem + 4.2vw, 5.25rem); }
+  .hero__lead { color: var(--c-night-ink); max-width: 640px; }
+  .hero__media { width: 100%; max-width: 880px; margin-top: 0.75rem; }
+  .hero__cta { display: grid; justify-items: center; gap: 1rem; margin-top: 0.5rem; }
+  .hero__social { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem 0.75rem; color: var(--c-night-ink); font-size: 0.9375rem; min-height: 44px; }
+  .hero__social strong { color: #fff; }
+  .hero__social:hover .hero__social-text { color: #fff; }
+  .hero__avatars { display: inline-flex; }
+  .hero__avatars :global(img) { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--c-night); object-fit: cover; margin-left: -8px; background: var(--c-night-2); }
+  .hero__avatars :global(img:first-child) { margin-left: 0; }
+  .hero__chip { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.3rem 0.8rem; padding: 0.55rem 0.9rem; border-radius: var(--r-pill); background: var(--c-night-surface); border: 1px solid var(--c-night-border); font-size: 0.875rem; color: var(--c-night-ink); }
+  .hero__chip .num { display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 700; color: #fff; }
+  .hero__chip small { font-size: 0.75rem; font-weight: 500; color: var(--c-night-ink); }
+  .hero__kpis {
+    width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; text-align: left;
+    margin-top: clamp(2rem, 4vw, 3.5rem); padding-top: clamp(1.5rem, 3vw, 2.5rem); border-top: 1px solid var(--c-night-border);
+  }
+  .kpi { display: grid; gap: 0.35rem; align-content: start; }
+  .kpi__value { font-size: clamp(2.75rem, 2.2rem + 2.6vw, 4.5rem); font-weight: 700; letter-spacing: -0.045em; line-height: 0.95; color: #fff; }
+  .kpi__label { font-size: 0.9375rem; color: var(--c-night-ink); display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.5rem; }
+  .hero__logos { width: 100%; margin-top: clamp(1.5rem, 3vw, 2.5rem); display: grid; gap: 1.25rem; justify-items: center; }
+  .hero__logos-label { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); text-align: center; }
+  .marquee { position: relative; width: 100vw; margin-inline: calc(50% - 50vw); overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .marquee__track { display: flex; align-items: center; gap: 3rem; width: max-content; animation: logos-scroll 55s linear infinite; }
+  .marquee:hover .marquee__track { animation-play-state: paused; }
+  .marquee__track li { display: inline-flex; align-items: center; flex: none; }
+  .marquee__track img { opacity: 0.72; transition: opacity var(--dur) var(--ease); }
+  .marquee__track li:hover img { opacity: 1; }
+  @keyframes logos-scroll { from { transform: translateX(0); } to { transform: translateX(calc(-50% - 1.5rem)); } }
+  @media (min-width: 640px) { .hero__kpis { gap: 2rem; } }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee { width: auto; margin-inline: 0; -webkit-mask-image: none; mask-image: none; }
+    .marquee__track { animation: none; width: auto; flex-wrap: wrap; justify-content: center; gap: 1.25rem 2rem; }
+    .marquee__track li[aria-hidden='true'] { display: none; }
+  }
+  @media (max-width: 480px) {
+    .hero__pill { font-size: 0.8125rem; padding: 0 0.8rem; }
+    .kpi__value { font-size: 2.125rem; letter-spacing: -0.04em; }
+    .kpi__label { font-size: 0.75rem; }
+    .hero__cta { width: 100%; }
+    .hero__cta :global(.btn) { width: 100%; }
+  }
+</style>

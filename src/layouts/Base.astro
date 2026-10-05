@@ -1,0 +1,126 @@
+---
+import '../styles/global.css';
+import { site, analytics, trust, booking } from '../data/site';
+import { experiments } from '../data/experiments';
+
+interface Props { title?: string; description?: string; path?: string; noindex?: boolean }
+const { title = site.title, description = site.description, path = '/', noindex = false } = Astro.props;
+/** Démo (Vercel sans SITE_URL) : pas d’indexation, URLs absolues basées sur le déploiement. */
+const isDemo = Boolean(import.meta.env.VERCEL) && !import.meta.env.SITE_URL;
+const origin = Astro.site?.toString() ?? site.url;
+const canonical = new URL(path, isDemo ? origin : site.url).toString();
+const ogImage = new URL('/og.png', origin).toString();
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'MIG',
+    alternateName: 'Agence MIG',
+    url: site.url,
+    logo: new URL('/icons/icon-512.png', site.url).toString(),
+    email: site.contactEmail,
+    sameAs: [trust.trustpilotUrl],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'Diagnostic de croissance e-commerce',
+    serviceType: 'Growth marketing e-commerce : CRO, créatives, Meta & Google Ads, email et WhatsApp',
+    provider: { '@type': 'Organization', name: 'MIG', url: site.url },
+    areaServed: ['FR', 'CH', 'BE'],
+    url: canonical,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR', description: `Diagnostic gratuit de ${booking.durationMinutes} minutes, sans engagement`, url: booking.calendlyUrl },
+  },
+];
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {(noindex || isDemo) && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#03051a" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MIG" />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+
+    <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="dns-prefetch" href="https://assets.calendly.com" />
+
+    <script is:inline define:vars={{ experiments }}>
+      /* Affectation des variantes A/B avant le premier rendu (aucun flash). Forçage : ?exp=headline:B,cta:B */
+      (function () {
+        var html = document.documentElement;
+        html.classList.add('js');
+        try {
+          var forced = {};
+          var q = new URLSearchParams(location.search).get('exp');
+          if (q) q.split(',').forEach(function (pair) { var kv = pair.split(':'); if (kv[0] && kv[1]) forced[kv[0]] = kv[1]; });
+          var store = {};
+          try { store = JSON.parse(localStorage.getItem('mig_exp') || '{}'); } catch (e) {}
+          var changed = false, any = false;
+          Object.keys(experiments).forEach(function (id) {
+            var ex = experiments[id];
+            var v = forced[id];
+            if (v && ex.variants.indexOf(v) < 0) v = null;
+            if (!v && ex.active) {
+              v = store[id];
+              if (!v || ex.variants.indexOf(v) < 0) { v = ex.variants[Math.floor(Math.random() * ex.variants.length)]; store[id] = v; changed = true; }
+            }
+            if (!v) v = ex.variants[0];
+            if (ex.active || forced[id]) any = true;
+            html.setAttribute('data-exp-' + id.toLowerCase(), v);
+          });
+          if (changed) { try { localStorage.setItem('mig_exp', JSON.stringify(store)); } catch (e) {} }
+          if (any) html.setAttribute('data-exp-active', '1');
+        } catch (e) {}
+      })();
+    </script>
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    {analytics.gtmId && (
+      <script is:inline define:vars={{ gtmId: analytics.gtmId }}>
+        window.dataLayer = window.dataLayer || [];
+        (function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s); j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', gtmId);
+      </script>
+    )}
+    {analytics.metaPixelId && (
+      <script is:inline define:vars={{ pixelId: analytics.metaPixelId }}>
+        /* TODO MIG : à n’activer qu’après consentement (RGPD). */
+        !(function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); }; if (!f['_fbq']) f['_fbq'] = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s); })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', pixelId); fbq('track', 'PageView');
+      </script>
+    )}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Aller au contenu</a>
+    <slot />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>
+<style is:global>
+  body.has-sticky-cta { padding-bottom: 96px; }
+  @media (min-width: 900px) { body.has-sticky-cta { padding-bottom: 0; } }
+</style>

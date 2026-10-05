@@ -1,0 +1,57 @@
+---
+/** Façade légère de la VSL Wistia : l’iframe/player n’est chargé qu’au clic. */
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { methodVideo } from '../data/method';
+import thumb from '../assets/proof/vsl-thumbnail.webp';
+interface Props { badge?: { value: string; label: string } }
+const { badge } = Astro.props;
+---
+<div class="vsl" data-vsl>
+  <button type="button" class="vsl__btn" data-video={methodVideo.wistiaId}>
+    <span class="sr-only">Lire la vidéo : </span>
+    <Image src={thumb} alt="" width={960} height={654} format="webp" loading="eager" fetchpriority="high" class="vsl__thumb" />
+    <span class="vsl__play" aria-hidden="true"><Icon name="play" size={28} /></span>
+    <span class="vsl__meta"><strong>{methodVideo.title}</strong><span>{methodVideo.duration}</span></span>
+  </button>
+  {badge && (
+    <p class="vsl__badge num" aria-label={`${badge.value} ${badge.label}`}>
+      <strong>{badge.value}</strong><span>{badge.label}</span>
+    </p>
+  )}
+</div>
+<style>
+  .vsl { position: relative; }
+  .vsl__btn {
+    position: relative; display: block; width: 100%; aspect-ratio: 960 / 654; overflow: hidden;
+    border-radius: var(--r-lg); background: var(--c-night-2); border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7), 0 0 0 6px rgba(255, 255, 255, 0.04);
+  }
+  .vsl__btn :global(img) { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: opacity var(--dur) var(--ease), transform 0.6s var(--ease); }
+  .vsl__btn:hover :global(img) { opacity: 1; transform: scale(1.02); }
+  .vsl__btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(3, 5, 26, 0.85), transparent 50%); }
+  .vsl__play {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1;
+    width: 76px; height: 76px; border-radius: 50%; background: #fff; color: var(--c-blue); display: grid; place-items: center;
+    box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.5); transition: transform var(--dur) var(--ease);
+  }
+  .vsl__play svg { margin-left: 3px; }
+  .vsl__btn:hover .vsl__play { transform: translate(-50%, -50%) scale(1.06); }
+  .vsl__meta { position: absolute; left: 1.25rem; right: 1.25rem; bottom: 1.1rem; z-index: 1; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; color: #fff; text-align: left; }
+  .vsl__meta strong { font-weight: 600; }
+  .vsl__meta span { font-size: 0.875rem; color: var(--c-night-ink); }
+  .vsl__badge {
+    position: absolute; top: -14px; right: -10px; z-index: 2; display: grid; gap: 0.1rem; padding: 0.7rem 1rem;
+    background: #fff; color: var(--c-ink); border-radius: 14px; box-shadow: var(--shadow-3); border: 1px solid var(--c-border);
+    transform: rotate(2deg);
+  }
+  .vsl__badge strong { font-size: 1.25rem; letter-spacing: -0.03em; font-weight: 700; line-height: 1; }
+  .vsl__badge span { font-size: 0.75rem; color: var(--c-ink-3); }
+  .vsl :global(wistia-player) { display: block; width: 100%; border-radius: var(--r-lg); overflow: hidden; }
+  @media (max-width: 480px) {
+    .vsl__play { width: 60px; height: 60px; }
+    .vsl__meta { flex-direction: column; gap: 0.1rem; }
+    .vsl__badge { right: 8px; top: -12px; padding: 0.55rem 0.8rem; }
+    .vsl__badge strong { font-size: 1.0625rem; }
+  }
+</style>
