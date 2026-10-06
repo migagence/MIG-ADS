@@ -1,0 +1,51 @@
+---
+/**
+ * Bandeau de consentement (RGPD).
+ * Les traceurs ne sont chargés qu’après acceptation explicite : voir le script de Base.astro
+ * qui expose window.__migLoadTrackers et n’appelle rien par défaut.
+ */
+import { analytics } from '../data/site';
+const hasTrackers = Boolean(analytics.metaPixelId || analytics.gtmId);
+---
+{hasTrackers && (
+  <aside class="consent" data-consent hidden role="region" aria-label="Gestion des cookies">
+    <div class="consent__inner">
+      <p class="consent__text">
+        On utilise des cookies de mesure d’audience et publicitaires (Meta) pour comprendre
+        d’où viennent nos visiteurs et améliorer cette page. Rien n’est déposé sans ton accord.
+        <a href="/confidentialite">En savoir plus</a>
+      </p>
+      <div class="consent__actions">
+        <button type="button" class="btn btn--secondary btn--sm" data-consent-decline>Refuser</button>
+        <button type="button" class="btn btn--primary btn--sm" data-consent-accept>Accepter</button>
+      </div>
+    </div>
+  </aside>
+)}
+<style>
+  .consent {
+    position: fixed; inset-inline: 0; bottom: 0; z-index: 60;
+    padding: 1rem var(--gutter) calc(1rem + env(safe-area-inset-bottom, 0px));
+    background: var(--c-night); color: #fff;
+    border-top: 1px solid var(--c-night-border);
+    box-shadow: 0 -12px 40px -12px rgba(3, 5, 26, 0.6);
+    animation: consent-in 0.3s var(--ease);
+  }
+  @keyframes consent-in { from { transform: translateY(100%); } to { transform: none; } }
+  .consent__inner {
+    max-width: calc(var(--container) + 2 * var(--gutter)); margin-inline: auto;
+    display: grid; gap: 0.9rem; align-items: center;
+  }
+  .consent__text { font-size: 0.875rem; line-height: 1.5; color: var(--c-night-ink); max-width: 76ch; }
+  .consent__text a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+  .consent__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .consent__actions .btn { flex: 1 1 auto; min-width: 120px; }
+  .consent .btn--secondary { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.4); }
+  .consent .btn--secondary:hover { background: rgba(255, 255, 255, 0.08); border-color: #fff; }
+  .consent :global(:focus-visible) { outline-color: #fff; }
+  @media (min-width: 860px) {
+    .consent__inner { grid-template-columns: minmax(0, 1fr) auto; gap: 2rem; }
+    .consent__actions .btn { flex: 0 0 auto; }
+  }
+  @media (prefers-reduced-motion: reduce) { .consent { animation: none; } }
+</style>

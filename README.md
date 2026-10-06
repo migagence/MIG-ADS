@@ -59,7 +59,7 @@ Chaque chiffre affiché est sourcé dans les commentaires des fichiers de donné
 
 Tous les événements sont poussés dans `window.dataLayer` (compatible Google Tag Manager) et relayés vers `gtag` / `fbq` s’ils sont présents. Événements :
 
-`hero_cta_click`, `header_cta_click`, `results_cta_click`, `sticky_cta_click`, `final_cta_click`, `hero_secondary_click`, `hero_proof_click`, `nav_click`, `leaks_method_click`, `case_study_open`, `trustpilot_click`, `method_interaction` (nœud du diagramme ou lecture vidéo), `faq_open`, `calendly_open`, `booking_slot_selected`, `booking_complete`, `experiment_exposure`.
+`hero_cta_click`, `header_cta_click`, `results_cta_click`, `sticky_cta_click`, `final_cta_click`, `hero_secondary_click`, `hero_proof_click`, `nav_click`, `leaks_method_click`, `case_study_open`, `trustpilot_click`, `method_interaction` (nœud du diagramme ou lecture vidéo), `faq_open`, `calendly_open`, `booking_slot_selected`, `booking_complete`, `experiment_exposure`, `consent_granted`, `consent_denied`, `testimonial_video_play`.
 
 Chaque événement embarque les paramètres de campagne conservés et les variantes A/B actives.
 
@@ -84,7 +84,17 @@ Commite et pousse : le déploiement se déclenche tout seul. Un ID de pixel n’
 
 Le préfixe `PUBLIC_` est obligatoire, c’est lui qui autorise Astro à exposer la valeur au navigateur. Le site étant statique, **un redéploiement est nécessaire** après chaque changement.
 
-Laisser vide des deux côtés = aucun script de tracking n’est chargé. À n’activer qu’avec un bandeau de consentement (RGPD).
+Laisser vide des deux côtés = aucun script de tracking n’est chargé.
+
+### Consentement (RGPD)
+
+Aucun traceur n’est chargé avant l’accord explicite du visiteur. Le bandeau (`ConsentBanner.astro`, logique dans `src/scripts/consent.ts`) suit les recommandations de la CNIL :
+
+- Refuser est aussi accessible qu’accepter, deux boutons de même poids.
+- Le pixel n’est injecté qu’au clic sur « Accepter », via `window.__migLoadTrackers`.
+- Le choix est conservé 6 mois (`consent.maxAgeDays` dans `site.ts`), puis la question est reposée.
+- Le lien « Cookies » du pied de page permet de revenir sur sa décision à tout moment.
+- Les choix sont tracés par les événements `consent_granted` et `consent_denied`.
 
 ### Déploiement automatique
 

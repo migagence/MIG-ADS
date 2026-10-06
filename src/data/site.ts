@@ -63,6 +63,18 @@ export const analytics = {
   gtmId: import.meta.env.PUBLIC_GTM_ID || GTM_ID,
 } as const;
 
+/**
+ * Consentement (RGPD / recommandations CNIL).
+ * - Aucun traceur n’est chargé tant que le visiteur n’a pas accepté explicitement.
+ * - Refuser est aussi simple qu’accepter (deux boutons de même poids).
+ * - Le choix est conservé 6 mois, puis le bandeau réapparaît.
+ * - Le visiteur peut revenir sur sa décision via le lien « Cookies » du pied de page.
+ */
+export const consent = {
+  storageKey: 'mig_consent',
+  maxAgeDays: 182,
+} as const;
+
 export const nav = [
   { label: 'Témoignages', href: '#temoignages' },
   { label: 'Résultats', href: '#resultats' },

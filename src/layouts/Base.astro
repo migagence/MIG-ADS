@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { site, analytics, trust, booking } from '../data/site';
+import { site, analytics, trust, booking, consent } from '../data/site';
 import { experiments } from '../data/experiments';
 
 interface Props { title?: string; description?: string; path?: string; noindex?: boolean }
@@ -98,17 +98,43 @@ const jsonLd = [
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-    {analytics.gtmId && (
-      <script is:inline define:vars={{ gtmId: analytics.gtmId }}>
-        window.dataLayer = window.dataLayer || [];
-        (function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s); j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', gtmId);
-      </script>
-    )}
-    {analytics.metaPixelId && (
-      <script is:inline define:vars={{ pixelId: analytics.metaPixelId }}>
-        /* TODO MIG : à n’activer qu’après consentement (RGPD). */
-        !(function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); }; if (!f['_fbq']) f['_fbq'] = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s); })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', pixelId); fbq('track', 'PageView');
+    {(analytics.metaPixelId || analytics.gtmId) && (
+      <script is:inline define:vars={{ pixelId: analytics.metaPixelId, gtmId: analytics.gtmId, storageKey: consent.storageKey, maxAgeDays: consent.maxAgeDays }}>
+        /* Aucun traceur n'est chargé tant que le visiteur n'a pas accepté (RGPD). */
+        (function () {
+          window.__migConsentConfig = { storageKey: storageKey, maxAgeDays: maxAgeDays };
+
+          window.__migLoadTrackers = function () {
+            if (window.__migTrackersLoaded) return;
+            window.__migTrackersLoaded = true;
+
+            if (pixelId) {
+              !(function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); }; if (!f['_fbq']) f['_fbq'] = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s); })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+              fbq('init', pixelId);
+              fbq('track', 'PageView');
+            }
+
+            if (gtmId) {
+              window.dataLayer = window.dataLayer || [];
+              window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+              var f = document.getElementsByTagName('script')[0];
+              var j = document.createElement('script');
+              j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + gtmId;
+              f.parentNode.insertBefore(j, f);
+            }
+          };
+
+          try {
+            var raw = localStorage.getItem(storageKey);
+            if (raw) {
+              var saved = JSON.parse(raw);
+              if (Date.now() - (saved.date || 0) < maxAgeDays * 864e5) {
+                window.__migConsentSettled = true;
+                if (saved.choice === 'granted') window.__migLoadTrackers();
+              }
+            }
+          } catch (e) { /* stockage indisponible : le bandeau sera affiché */ }
+        })();
       </script>
     )}
   </head>
@@ -122,5 +148,7 @@ const jsonLd = [
 </html>
 <style is:global>
   body.has-sticky-cta { padding-bottom: 96px; }
+  body.has-consent-banner { padding-bottom: 180px; }
+  body.has-consent-banner.has-sticky-cta { padding-bottom: 260px; }
   @media (min-width: 900px) { body.has-sticky-cta { padding-bottom: 0; } }
 </style>
