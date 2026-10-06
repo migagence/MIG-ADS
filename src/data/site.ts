@@ -52,10 +52,10 @@ export const trust = {
  *    Un redéploiement est nécessaire après chaque changement de valeur.
  *
  * Laisser vide des deux côtés = aucun script de tracking n’est chargé.
- * ID du pixel présent sur l’ancien site migecosystem.com, pour mémoire : 39199030669683909.
+ * ID renseigné le 06/10/2026 par MIG (identique à celui de l’ancien site migecosystem.com).
  * TODO MIG : prévoir un bandeau de consentement (RGPD) avant d’activer le pixel.
  */
-const META_PIXEL_ID = '';
+const META_PIXEL_ID = '39199030669683909';
 const GTM_ID = '';
 
 export const analytics = {
