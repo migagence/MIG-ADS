@@ -102,7 +102,7 @@ Par défaut `active: false` → tout le monde voit la variante de contrôle. Pas
 
 ## À confirmer par MIG avant mise en ligne (TODO dans le code)
 
-- `src/data/videoTestimonials.ts` : 2 vidéos intégrées (Leo / EziClic et Julien / Da Licences, `public/video/`). La 3ᵉ (Ambre / Lünae Paris) reste à fournir : la carte affiche un visuel d’attente.
+- `src/data/videoTestimonials.ts` : les 3 vidéos sont intégrées (Leo / EziClic, Julien / Da Licences, Ambre / Lünae Paris) dans `public/video/`, réencodées en H.264 pour la compatibilité navigateurs.
 - `src/data/caseStudies.ts` : 4 cas avec captures Shopify (Cosmetic Hair Shop, Siho, Attar Studio, Joia Paris). Wood Vibe a été retiré le 05/10/2026.
 - `src/data/clients.ts` : 15 logos clients. Un 16ᵉ logo du dossier Drive n’est pas téléchargeable (droits d’accès) et Natural 5 n’est pas exploitable en monochrome : à renvoyer en PNG transparent si besoin.
 - Les témoignages texte de Jean-Christophe Gadrat (Siho) et Johanna Saada (Joia) citent des chiffres arrondis différents des chiffres affichés (4K→40K vs 5K→35K ; 250K→650K vs 4K→250K/mois). Verbatims conservés tels quels : décision MIG du 05/10/2026, ne pas harmoniser.

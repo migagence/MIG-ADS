@@ -1,6 +1,6 @@
 import posterLeo from '../assets/video/poster-video-a.webp';
 import posterJulien from '../assets/video/poster-video-b.webp';
-import posterAmbre from '../assets/video/poster-lunae-paris.webp';
+import posterAmbre from '../assets/video/poster-ambre-lunae.webp';
 
 export type VideoTestimonial = {
   id: string;
@@ -38,12 +38,12 @@ export const videoTestimonials: VideoTestimonial[] = [
     video: { src: '/video/temoignage-julien-dalicences.mp4', type: 'mp4' },
   },
   {
-    // TODO MIG : vidéo d’Ambre à fournir (3ᵉ témoignage annoncé le 05/10/2026).
     id: 'ambre-lunae-paris',
-    quote: '',
+    quote: 'Ils ont pu tout reprendre et là les premières ventes sont arrivées, les chiffres ont commencé à augmenter.',
     name: 'Ambre',
     company: 'Lünae Paris',
     url: 'https://lunae-paris.com/',
     poster: posterAmbre,
+    video: { src: '/video/temoignage-ambre-lunae.mp4', type: 'mp4' },
   },
 ];
