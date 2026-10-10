@@ -3,7 +3,6 @@ import CtaButton from './CtaButton.astro';
 import Icon from './Icon.astro';
 import TrustpilotStars from './TrustpilotStars.astro';
 import { booking, trust } from '../data/site';
-import { diagnosticSteps } from '../data/diagnostic';
 import { notFitFor } from '../data/fit';
 ---
 <section class="section closing" id="diagnostic" aria-labelledby="closing-title" data-closing>
@@ -23,11 +22,11 @@ import { notFitFor } from '../data/fit';
     </div>
 
     <div class="closing__panel reveal" data-delay="2">
-      <h3 class="closing__panel-title">Ce qu’on regarde pendant l’appel</h3>
+      <h3 class="closing__panel-title">Comment ça se passe</h3>
       <ol class="dsteps">
-        {diagnosticSteps.map((s) => (
-          <li><span class="dsteps__idx num" aria-hidden="true">{s.index}</span><span><strong>{s.title}</strong><span class="dsteps__text">{s.text}</span></span></li>
-        ))}
+        <li><span class="dsteps__idx num" aria-hidden="true">1</span><span><strong>Tu choisis ton créneau</strong><span class="dsteps__text">Directement sur le calendrier ci-dessous.</span></span></li>
+        <li><span class="dsteps__idx num" aria-hidden="true">2</span><span><strong>On prépare ton diagnostic</strong><span class="dsteps__text">On regarde ton site, tes campagnes et tes flows avant l’appel.</span></span></li>
+        <li><span class="dsteps__idx num" aria-hidden="true">3</span><span><strong>On débriefe ensemble</strong><span class="dsteps__text">Tu repars avec tes blocages et tes actions prioritaires.</span></span></li>
       </ol>
       <p class="closing__not">Pas pour toi si {notFitFor[2].replace(/\.$/, '')}.</p>
     </div>

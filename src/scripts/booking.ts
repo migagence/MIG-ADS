@@ -1,11 +1,17 @@
 /**
- * Modal de réservation : Calendly chargé uniquement à l’ouverture,
- * UTM transmis, tracking calendly_open / booking_complete.
+ * Réservation : widget Calendly intégré directement dans la page.
+ * Le script Calendly (~100 Ko) n’est chargé qu’à l’approche de la section, pour ne pas
+ * pénaliser le chargement initial. Les paramètres de campagne sont transmis au widget.
  */
 import { track, withAttribution, getAttribution } from './analytics';
 
 type CalendlyApi = {
-  initInlineWidget: (options: { url: string; parentElement: HTMLElement; prefill?: Record<string, unknown>; utm?: Record<string, string | undefined> }) => void;
+  initInlineWidget: (options: {
+    url: string;
+    parentElement: HTMLElement;
+    prefill?: Record<string, unknown>;
+    utm?: Record<string, string | undefined>;
+  }) => void;
 };
 declare global {
   interface Window { Calendly?: CalendlyApi }
@@ -14,7 +20,7 @@ declare global {
 const CALENDLY_SRC = 'https://assets.calendly.com/assets/external/widget.js';
 let loader: Promise<void> | null = null;
 
-function loadCalendly(): Promise<void> {
+function loadCalendlyScript(): Promise<void> {
   if (window.Calendly) return Promise.resolve();
   if (loader) return loader;
   loader = new Promise((resolve, reject) => {
@@ -29,82 +35,75 @@ function loadCalendly(): Promise<void> {
 }
 
 export function initBooking(): void {
-  const dialog = document.getElementById('booking') as HTMLDialogElement | null;
-  if (!dialog) return;
-  const host = dialog.querySelector<HTMLElement>('[data-calendly-host]');
-  const status = dialog.querySelector<HTMLElement>('[data-booking-status]');
-  const fallback = dialog.querySelector<HTMLAnchorElement>('[data-booking-fallback]');
-  if (!host || !status || !fallback) return;
+  const section = document.querySelector<HTMLElement>('[data-booking]');
+  const host = section?.querySelector<HTMLElement>('[data-calendly-host]');
+  const status = section?.querySelector<HTMLElement>('[data-booking-status]');
+  if (!section || !host || !status) return;
+
   const baseUrl = host.dataset.url as string;
-  let initialized = false;
-  let lastTrigger: HTMLElement | null = null;
+  let mounted = false;
 
   const setState = (state: string) => { status.dataset.state = state; };
 
-  const mountCalendly = () => {
-    if (initialized) return;
-    initialized = true;
+  const mount = () => {
+    if (mounted) return;
+    mounted = true;
     setState('loading');
-    const slowTimer = window.setTimeout(() => { if (status.dataset.state === 'loading') setState('slow'); }, 6000);
-    loadCalendly()
+    const slowTimer = window.setTimeout(() => {
+      if (status.dataset.state === 'loading') setState('slow');
+    }, 6000);
+
+    loadCalendlyScript()
       .then(() => {
         window.clearTimeout(slowTimer);
         const a = getAttribution();
-        const utmMap: Record<string, string> = { utm_source: 'utmSource', utm_medium: 'utmMedium', utm_campaign: 'utmCampaign', utm_content: 'utmContent', utm_term: 'utmTerm' };
+        const utmMap: Record<string, string> = {
+          utm_source: 'utmSource', utm_medium: 'utmMedium', utm_campaign: 'utmCampaign',
+          utm_content: 'utmContent', utm_term: 'utmTerm',
+        };
         const utm: Record<string, string> = {};
         for (const [key, calendlyKey] of Object.entries(utmMap)) if (a[key]) utm[calendlyKey] = a[key];
+
         window.Calendly?.initInlineWidget({
           url: withAttribution(baseUrl),
           parentElement: host,
           ...(Object.keys(utm).length ? { utm } : {}),
         });
         setState('ready');
+        track('calendly_loaded');
       })
       .catch(() => {
         window.clearTimeout(slowTimer);
-        initialized = false;
+        mounted = false;
         setState('error');
       });
   };
 
-  const open = (trigger: HTMLElement | null) => {
-    lastTrigger = trigger;
-    fallback.href = withAttribution(baseUrl);
-    if (typeof dialog.showModal !== 'function') {
-      window.open(fallback.href, '_blank', 'noopener');
-      return;
-    }
-    dialog.showModal();
-    document.documentElement.classList.add('modal-open');
-    track('calendly_open', { source: trigger?.dataset.track ?? 'unknown' });
-    mountCalendly();
-  };
+  /* Chargement anticipé : 600 px avant que la section n'entre dans le viewport. */
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => { if (entries.some((e) => e.isIntersecting)) { io.disconnect(); mount(); } },
+      { rootMargin: '600px 0px' },
+    );
+    io.observe(section);
+  } else {
+    mount();
+  }
 
-  const close = () => { if (dialog.open) dialog.close(); };
-
-  dialog.addEventListener('close', () => {
-    document.documentElement.classList.remove('modal-open');
-    lastTrigger?.focus({ preventScroll: true });
-  });
-  dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
-  dialog.querySelector('[data-booking-close]')?.addEventListener('click', close);
-
+  /* Un CTA mène à la section : on force le chargement sans attendre le scroll. */
   document.addEventListener('click', (e) => {
     const trigger = (e.target as Element | null)?.closest<HTMLElement>('[data-book]');
     if (!trigger) return;
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // laisser le lien s’ouvrir dans un onglet
-    e.preventDefault();
-    open(trigger);
+    mount();
+    track('calendly_open', { source: trigger.dataset.track ?? 'unknown' });
   });
 
+  /* Événements renvoyés par l'iframe Calendly. */
   window.addEventListener('message', (e) => {
     if (e.origin !== 'https://calendly.com') return;
     const data = e.data as { event?: string } | null;
     if (!data || typeof data.event !== 'string' || !data.event.startsWith('calendly.')) return;
-    if (data.event === 'calendly.event_scheduled') {
-      track('booking_complete', { source: lastTrigger?.dataset.track ?? 'unknown' });
-    } else if (data.event === 'calendly.date_and_time_selected') {
-      track('booking_slot_selected');
-    }
+    if (data.event === 'calendly.event_scheduled') track('booking_complete');
+    else if (data.event === 'calendly.date_and_time_selected') track('booking_slot_selected');
   });
 }

@@ -50,16 +50,19 @@ Chaque chiffre affiché est sourcé dans les commentaires des fichiers de donné
 
 ## Prise de rendez-vous
 
-- Les CTA sont des liens vers Calendly (fonctionnent sans JavaScript).
-- Avec JavaScript, ils ouvrent un modal (`BookingModal`) qui charge Calendly en inline **uniquement à l’ouverture**.
-- Les paramètres `utm_*`, `gclid` et `fbclid` de l’URL d’arrivée sont conservés en `sessionStorage` et transmis à Calendly.
-- Un lien de secours ouvre Calendly dans un nouvel onglet si le widget ne charge pas.
+Le widget Calendly est **intégré directement dans la page**, section « Réserve ton créneau » (`BookingSection.astro`, logique dans `src/scripts/booking.ts`). Il n’y a plus de redirection ni de modal.
+
+- Tous les CTA pointent sur l’ancre `/#reserver` : ils fonctionnent sans JavaScript.
+- Le script Calendly (~100 Ko) n’est chargé qu’à 600 px de la section, ou immédiatement au clic sur un CTA. Le chargement initial de la page n’est pas pénalisé.
+- Les paramètres `utm_*`, `gclid` et `fbclid` de l’URL d’arrivée sont conservés et transmis au widget.
+- Si le widget ne charge pas, un lien de secours ouvre Calendly dans un nouvel onglet.
+- URL du widget : `calendly.com/ismaelmig/appeldedecouverte` (`booking.calendlyUrl` dans `site.ts`).
 
 ## Tracking
 
 Tous les événements sont poussés dans `window.dataLayer` (compatible Google Tag Manager) et relayés vers `gtag` / `fbq` s’ils sont présents. Événements :
 
-`hero_cta_click`, `header_cta_click`, `results_cta_click`, `sticky_cta_click`, `final_cta_click`, `hero_secondary_click`, `hero_proof_click`, `nav_click`, `leaks_method_click`, `case_study_open`, `trustpilot_click`, `method_interaction` (nœud du diagramme ou lecture vidéo), `faq_open`, `calendly_open`, `booking_slot_selected`, `booking_complete`, `experiment_exposure`, `consent_granted`, `consent_denied`, `testimonial_video_play`.
+`hero_cta_click`, `header_cta_click`, `results_cta_click`, `sticky_cta_click`, `final_cta_click`, `hero_secondary_click`, `hero_proof_click`, `nav_click`, `leaks_method_click`, `case_study_open`, `trustpilot_click`, `method_interaction` (nœud du diagramme ou lecture vidéo), `faq_open`, `calendly_open`, `calendly_loaded`, `booking_slot_selected`, `booking_complete`, `experiment_exposure`, `consent_granted`, `consent_denied`, `testimonial_video_play`.
 
 Chaque événement embarque les paramètres de campagne conservés et les variantes A/B actives.
 

@@ -1,0 +1,93 @@
+---
+/**
+ * Section de réservation : widget Calendly intégré à la page (pas de redirection).
+ * Le script Calendly est chargé à l’approche de la section par booking.ts.
+ */
+import Icon from './Icon.astro';
+import TrustpilotStars from './TrustpilotStars.astro';
+import { booking, trust } from '../data/site';
+import { diagnosticSteps } from '../data/diagnostic';
+---
+<section class="section booking" id="reserver" aria-labelledby="booking-title" data-booking>
+  <div class="container booking__inner">
+    <p class="eyebrow eyebrow--center reveal">Réserve ton créneau</p>
+    <h2 class="h2 booking__title reveal" id="booking-title" data-delay="1">
+      Réserve ton diagnostic gratuit,<br />disponible sous 24 h.
+    </h2>
+    <p class="lead booking__lead reveal" data-delay="2">
+      {booking.durationMinutes} minutes pour identifier où ta croissance fuit et par quoi commencer.
+    </p>
+
+    <ol class="booking__steps reveal" data-delay="2">
+      {diagnosticSteps.map((s) => (
+        <li><span class="booking__step-idx num" aria-hidden="true">{s.index}</span><span><strong>{s.title}</strong> {s.text}</span></li>
+      ))}
+    </ol>
+
+    <div class="booking__widget reveal" data-delay="3">
+      <div class="booking__status" data-booking-status data-state="idle" aria-live="polite">
+        <span class="booking__spinner" aria-hidden="true"></span>
+        <p data-msg="loading">Chargement du calendrier…</p>
+        <p data-msg="slow">Le calendrier met du temps à charger.</p>
+        <p data-msg="error">Le calendrier n’a pas pu être chargé.</p>
+        <a class="btn btn--secondary btn--sm" href={booking.calendlyUrl} target="_blank" rel="noopener" data-track="calendly_fallback_click">
+          Ouvrir Calendly dans un nouvel onglet <Icon name="external" size={15} />
+        </a>
+      </div>
+      <div class="calendly-inline-widget booking__host" data-calendly-host data-url={booking.calendlyUrl}></div>
+    </div>
+
+    <p class="booking__trust reveal">
+      <TrustpilotStars size={16} />
+      <span><strong>{trust.rating}/5</strong> sur Trustpilot · <strong>{trust.brandsCount}</strong> marques accompagnées · {booking.microcopy}</span>
+    </p>
+  </div>
+</section>
+<style>
+  .booking { background: var(--c-bg); border-top: 1px solid var(--c-border); }
+  .booking__inner { display: grid; justify-items: center; text-align: center; gap: 1rem; }
+  .booking__lead { max-width: 620px; }
+  .booking__steps {
+    display: grid; gap: 0.6rem 2rem; margin-top: 0.5rem; text-align: left;
+    max-width: 920px; width: 100%;
+  }
+  .booking__steps li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 0.6rem; align-items: start; font-size: 0.9375rem; color: var(--c-ink-2); }
+  .booking__steps strong { color: var(--c-ink); font-weight: 600; }
+  .booking__step-idx {
+    width: 26px; height: 26px; border-radius: 8px; background: var(--c-blue); color: #fff;
+    display: grid; place-items: center; font-weight: 700; font-size: 0.8125rem;
+  }
+  .booking__widget {
+    position: relative; width: 100%; max-width: 1040px; margin-top: 1.5rem;
+    min-height: 700px; border-radius: var(--r-lg); overflow: hidden;
+    background: var(--c-surface); border: 1px solid var(--c-border); box-shadow: var(--shadow-2);
+  }
+  .booking__host { min-width: 320px; height: 700px; }
+  .booking__host :global(iframe) { display: block; border-radius: var(--r-lg); }
+  .booking__status {
+    position: absolute; inset: 0; display: grid; place-content: center; justify-items: center;
+    gap: 0.75rem; text-align: center; padding: 1.5rem; color: var(--c-ink-2); pointer-events: none;
+  }
+  .booking__status[data-state='ready'] { display: none; }
+  .booking__status[data-state='idle'] p, .booking__status[data-state='idle'] [data-booking-fallback] { visibility: hidden; }
+  .booking__status[data-state='loading'] p:not([data-msg='loading']),
+  .booking__status[data-state='slow'] p:not([data-msg='slow']),
+  .booking__status[data-state='error'] p:not([data-msg='error']) { display: none; }
+  .booking__status[data-state='idle'] p:not([data-msg='loading']) { display: none; }
+  .booking__status[data-state='error'] .booking__spinner { display: none; }
+  .booking__status[data-state='loading'] .btn, .booking__status[data-state='idle'] .btn { visibility: hidden; }
+  .booking__status .btn { pointer-events: auto; }
+  .booking__spinner {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 3px solid var(--c-tint-2); border-top-color: var(--c-blue); animation: booking-spin 0.9s linear infinite;
+  }
+  @keyframes booking-spin { to { transform: rotate(360deg); } }
+  .booking__trust { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.25rem; font-size: 0.9375rem; color: var(--c-ink-2); }
+  .booking__trust strong { color: var(--c-ink); }
+  @media (min-width: 760px) { .booking__steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 480px) {
+    .booking__widget { min-height: 640px; }
+    .booking__host { height: 640px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .booking__spinner { animation-duration: 2s; } }
+</style>

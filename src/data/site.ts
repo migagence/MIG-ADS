@@ -16,10 +16,12 @@ export const site = {
 } as const;
 
 export const booking = {
-  /** Lien utilisé par les boutons CTA du site actuel (rendez-vous de 30 minutes). */
-  calendlyUrl: 'https://calendly.com/d/cqhc-yrt-fft/appel-decouverte-mig',
-  /** Lien du widget inline présent sur le site actuel, conservé en secours. */
-  calendlyFallbackUrl: 'https://calendly.com/ismaelmig/appeldedecouverte',
+  /** Widget Calendly intégré dans la section « Réserve ton créneau » (fourni par MIG le 10/10/2026). */
+  calendlyUrl: 'https://calendly.com/ismaelmig/appeldedecouverte',
+  /** Lien des anciens boutons CTA, conservé en secours. */
+  calendlyFallbackUrl: 'https://calendly.com/d/cqhc-yrt-fft/appel-decouverte-mig',
+  /** Cible de tous les CTA. Chemin absolu pour fonctionner depuis les pages légales. */
+  anchor: '/#reserver',
   /** Durée confirmée sur la page Calendly : « Ce rendez-vous de 30 minutes ». */
   durationMinutes: 30,
   /** Microcopy sous les CTA, reprise du site actuel (« Dispo en 24h · Gratuit · Sans engagement »). */

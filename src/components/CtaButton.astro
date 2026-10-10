@@ -1,7 +1,8 @@
 ---
 /**
- * CTA principal. Rendu en lien vers Calendly (fonctionne sans JS),
- * intercepté par booking.ts pour ouvrir le modal.
+ * CTA principal. Pointe vers la section de réservation qui contient le widget Calendly
+ * intégré. L’ancre fonctionne sans JavaScript ; avec JS, booking.ts force en plus le
+ * chargement immédiat du widget.
  */
 import Icon from './Icon.astro';
 import { booking } from '../data/site';
@@ -24,9 +25,7 @@ interface Props {
 const { label, abLabel = false, short, variant = 'primary', size = 'md', track, onDark = false, block = false, sub, class: className } = Astro.props;
 ---
 <a
-  href={booking.calendlyUrl}
-  target="_blank"
-  rel="noopener"
+  href={booking.anchor}
   class:list={['btn', `btn--${variant}`, size !== 'md' && `btn--${size}`, onDark && 'btn--on-dark', block && 'btn--block', short && 'btn--responsive', sub && 'btn--stacked', className]}
   data-book
   data-track={track}

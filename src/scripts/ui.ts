@@ -45,17 +45,20 @@ function initStickyCta(): void {
   const bar = document.querySelector<HTMLElement>('[data-sticky-cta]');
   const hero = document.getElementById('top');
   const closing = document.querySelector<HTMLElement>('[data-closing]');
+  const bookingSection = document.querySelector<HTMLElement>('[data-booking]');
   if (!bar || !hero || !('IntersectionObserver' in window)) return;
   let heroVisible = true;
   let closingVisible = false;
+  let bookingVisible = false;
   const apply = () => {
-    const show = !heroVisible && !closingVisible && !document.documentElement.classList.contains('modal-open');
+    const show = !heroVisible && !closingVisible && !bookingVisible && !document.documentElement.classList.contains('modal-open');
     bar.classList.toggle('is-visible', show);
     bar.setAttribute('aria-hidden', show ? 'false' : 'true');
     document.body.classList.toggle('has-sticky-cta', show);
   };
   new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; apply(); }, { threshold: 0.15 }).observe(hero);
   if (closing) new IntersectionObserver(([e]) => { closingVisible = e.isIntersecting; apply(); }, { threshold: 0.2 }).observe(closing);
+  if (bookingSection) new IntersectionObserver(([e]) => { bookingVisible = e.isIntersecting; apply(); }, { threshold: 0.05 }).observe(bookingSection);
   new MutationObserver(apply).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 }
 
