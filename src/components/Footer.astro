@@ -19,7 +19,10 @@ const year = new Date().getFullYear();
       </nav>
     </div>
     <p class="footer__legal">Ce site ne fait pas partie du site web de Facebook™ ou de Facebook™ Inc. De plus, ce site n’est PAS approuvé par Facebook™ de quelque manière que ce soit. FACEBOOK™ est une marque déposée de FACEBOOK™, Inc.</p>
-    <p class="footer__copy">© {year} {site.legalName}. Tous droits réservés.</p>
+    <div class="footer__bottom">
+      <p class="footer__copy">© {year} {site.legalName}. Tous droits réservés.</p>
+      <p class="footer__credit">Réalisé par <a href="https://www.pratstudio.fr" target="_blank" rel="noopener">Prat Studio</a></p>
+    </div>
   </div>
 </footer>
 <style>
@@ -31,5 +34,9 @@ const year = new Date().getFullYear();
   .footer__nav a { min-height: 44px; display: inline-flex; align-items: center; transition: color var(--dur) var(--ease); }
   .footer__nav a:hover { color: #fff; }
   .footer__legal { margin-top: 1.5rem; font-size: 0.75rem; color: rgba(201, 207, 242, 0.7); max-width: 80ch; line-height: 1.5; }
-  .footer__copy { margin-top: 0.75rem; }
+  .footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.35rem 1.5rem; margin-top: 0.75rem; }
+  .footer__credit { font-size: 0.8125rem; color: rgba(201, 207, 242, 0.65); }
+  .footer__credit a { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color var(--dur) var(--ease); }
+  .footer__credit a:hover { color: #fff; }
+  .footer__credit a:focus-visible { outline: 3px solid #fff; outline-offset: 3px; border-radius: 4px; color: #fff; }
 </style>
