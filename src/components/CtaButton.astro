@@ -5,7 +5,7 @@
  * chargement immédiat du widget.
  */
 import Icon from './Icon.astro';
-import { booking } from '../data/site';
+import { booking, landingPaths } from '../data/site';
 import { ctaVariants } from '../data/experiments';
 
 interface Props {
@@ -23,9 +23,14 @@ interface Props {
   class?: string;
 }
 const { label, abLabel = false, short, variant = 'primary', size = 'md', track, onDark = false, block = false, sub, class: className } = Astro.props;
+/** Sur une landing (accueil, /cro), on reste sur la page : ancre locale. */
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const href = (landingPaths as readonly string[]).includes(path)
+  ? booking.anchor.slice(booking.anchor.indexOf('#'))
+  : booking.anchor;
 ---
 <a
-  href={booking.anchor}
+  href={href}
   class:list={['btn', `btn--${variant}`, size !== 'md' && `btn--${size}`, onDark && 'btn--on-dark', block && 'btn--block', short && 'btn--responsive', sub && 'btn--stacked', className]}
   data-book
   data-track={track}

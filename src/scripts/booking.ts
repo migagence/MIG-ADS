@@ -63,6 +63,9 @@ export function initBooking(): void {
         };
         const utm: Record<string, string> = {};
         for (const [key, calendlyKey] of Object.entries(utmMap)) if (a[key]) utm[calendlyKey] = a[key];
+        /* Identifie la landing d’origine du rendez-vous (ex. « lp-cro ») si aucun utm_content n’a été transmis. */
+        const pageTag = section.dataset.pageTag;
+        if (pageTag && !utm.utmContent) utm.utmContent = pageTag;
 
         window.Calendly?.initInlineWidget({
           url: withAttribution(baseUrl),

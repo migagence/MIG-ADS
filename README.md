@@ -44,6 +44,27 @@ Tout le contenu éditorial est centralisé dans `src/data/` :
 
 Les images sources sont dans `src/assets/` et sont optimisées au build (WebP/PNG, densités 1x/2x/3x).
 
+## Deuxième landing page : `/cro`
+
+Une seconde landing page tourne **en parallèle** de la page d’accueil, à l’adresse `/cro` (brief « LP CRO MIG — page annotée »). Elle est centrée sur une seule offre : l’optimisation du site (CRO).
+
+- **La page d’accueil n’est pas modifiée.** Les deux pages partagent les mêmes composants : chaque composant accepte désormais ses textes en props et retombe sur ceux de l’accueil quand on ne lui passe rien.
+- Tout le contenu de la LP CRO est dans **`src/data/cro.ts`** (un bloc par section, numéro d’annotation du brief en commentaire). La page est `src/pages/cro.astro`.
+- Différences avec l’accueil : accroche « Vends plus sans dépenser un euro de plus en pub. », chiffre du milieu « 120 missions CRO réalisées », preuve du hero qui pointe sur le cas Siho, ordre des vidéos Ambre → Leo → Julien, Siho en 1re étude de cas, Attar Studio retirée, méthode en 4 étapes CRO (Audit, Fiches produits, Vitesse, Panier moyen), FAQ et bloc de clôture réécrits.
+- **`noindex` par défaut** (`croMeta.noindex`) : les deux pages visent le même mot-clé, on évite qu’elles se concurrencent dans Google. Passer à `false` pour la référencer.
+- **Suivi des rendez-vous** : la page transmet `utm_content=lp-cro` à Calendly (`croMeta.bookingTag`) quand l’URL d’arrivée n’a pas déjà son propre `utm_content`. Les rendez-vous venus de cette page sont donc identifiables sans créer un second type d’événement Calendly. Les événements de tracking contiennent déjà `page_path`.
+
+### Ce qui reste à fournir par MIG
+
+| Emplacement | Attendu |
+| --- | --- |
+| Hero | Nouvelle VSL « Pourquoi ton site ne convertit pas ». En attendant, la VSL actuelle (11 min) est affichée : brancher l’ID Wistia dans `croVideo`. |
+| Étude de cas Siho | Taux de conversion avant → après. En attendant, le MER (~5) déjà publié est conservé. |
+| Méthode, étapes 02 / 03 / 04 | Fiche produit avant/après, score PageSpeed avant/après, dashboard de l’app d’upsell. Les cartes affichent un emplacement « Visuel à venir ». |
+| Témoignages vidéo | 1 ou 2 témoignages orientés site (pistes : Jean-Christophe / Siho, Johanna / Joia Paris) pour remplacer Leo et Julien sur cette page. |
+
+Le badge du hero affiche **5K€ → 35K€/mois** (et non « 4K€ » comme sur la maquette annotée) pour rester cohérent avec la carte Siho, dont les chiffres ont été corrigés par MIG le 05/10/2026.
+
 ## Règle de crédibilité
 
 Chaque chiffre affiché est sourcé dans les commentaires des fichiers de données (landing page actuelle, page Calendly, fiche Trustpilot vérifiée le 30/09/2026 : 4,7/5, 56 avis). Ne pas ajouter de métrique sans source vérifiable.
@@ -52,7 +73,7 @@ Chaque chiffre affiché est sourcé dans les commentaires des fichiers de donné
 
 Le widget Calendly est **intégré directement dans la page**, section « Réserve ton créneau » (`BookingSection.astro`, logique dans `src/scripts/booking.ts`). Il n’y a plus de redirection ni de modal.
 
-- Tous les CTA pointent sur l’ancre `/#reserver` : ils fonctionnent sans JavaScript.
+- Tous les CTA pointent sur l’ancre `#reserver` de la page courante (et sur `/#reserver` depuis les pages légales) : ils fonctionnent sans JavaScript et conservent les paramètres `utm_*` de l’URL d’arrivée. Les pages qui contiennent la section de réservation sont listées dans `landingPaths` (`src/data/site.ts`).
 - Le script Calendly (~100 Ko) n’est chargé qu’à 600 px de la section, ou immédiatement au clic sur un CTA. Le chargement initial de la page n’est pas pénalisé.
 - Les paramètres `utm_*`, `gclid` et `fbclid` de l’URL d’arrivée sont conservés et transmis au widget.
 - Si le widget ne charge pas, un lien de secours ouvre Calendly dans un nouvel onglet.

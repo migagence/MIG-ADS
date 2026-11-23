@@ -29,6 +29,8 @@ export type CaseStudy = {
   highlight: string;
   timeframe?: string;
   levers: string[];
+  /** Levier mis en avant (pastille bleue). Utilisé par la LP /cro. */
+  highlightLever?: string;
   /** Contexte court, repris de la landing page actuelle. */
   story: string;
   /** Titre de la ligne dépliable (format « avant → après »). */

@@ -3,30 +3,48 @@ import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
 import SectionHeading from './SectionHeading.astro';
 import { methodSteps } from '../data/method';
+
+/** Sans props : section de la page d’accueil. /cro passe ses propres étapes. */
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  lead?: string;
+  steps?: typeof methodSteps;
+  pipelineEnd?: string;
+}
+const {
+  eyebrow = 'La méthode MIG',
+  title = 'MIG ne vend pas quatre prestations séparées.<br /><span class="accent">MIG pilote la chaîne entière.</span>',
+  lead = 'Un freelance sur les Ads, une agence sur le site, personne sur l’email : le CA plafonne. Ici, un seul pilote sur les quatre leviers.',
+  steps = methodSteps,
+  pipelineEnd = 'Chiffre d’affaires',
+} = Astro.props;
 ---
 <section class="section method" id="methode" aria-labelledby="method-title">
   <div class="container">
-    <SectionHeading
-      eyebrow="La méthode MIG"
-      title="MIG ne vend pas quatre prestations séparées.<br /><span class=&quot;accent&quot;>MIG pilote la chaîne entière.</span>"
-      lead="Un freelance sur les Ads, une agence sur le site, personne sur l’email : le CA plafonne. Ici, un seul pilote sur les quatre leviers."
-      align="center"
-    />
+    <SectionHeading eyebrow={eyebrow} title={title} lead={lead} align="center" />
 
     <ol class="pipeline reveal" aria-label="Les quatre leviers alimentent le revenu">
-      {methodSteps.map((s) => (
+      {steps.map((s) => (
         <li class="pipeline__step"><span class="pipeline__idx num">{s.index}</span>{s.key}<Icon name="arrow" size={14} class="pipeline__arrow" /></li>
       ))}
-      <li class="pipeline__step pipeline__step--end">Chiffre d’affaires</li>
+      <li class="pipeline__step pipeline__step--end">{pipelineEnd}</li>
     </ol>
 
     <ol class="mgrid">
-      {methodSteps.map((s, i) => (
+      {steps.map((s, i) => (
         <li class="mcard reveal" data-delay={String(i + 1)}>
-          <figure class="mcard__proof">
-            <Image src={s.proof.image} alt={s.proof.alt} width={560} format="webp" loading="lazy" />
-            <figcaption>{s.proof.caption}</figcaption>
-          </figure>
+          {s.proof ? (
+            <figure class="mcard__proof">
+              <Image src={s.proof.image} alt={s.proof.alt} width={560} format="webp" loading="lazy" />
+              <figcaption>{s.proof.caption}</figcaption>
+            </figure>
+          ) : (
+            <figure class="mcard__proof mcard__proof--todo">
+              <span class="mcard__todo" aria-hidden="true">Visuel à venir</span>
+              <figcaption>{s.proofTodo}</figcaption>
+            </figure>
+          )}
           <div class="mcard__body">
             <p class="mcard__head"><span class="mcard__idx num">{s.index}</span><span class="mcard__key">{s.key}</span></p>
             <h3 class="mcard__title">{s.title}</h3>
@@ -53,6 +71,14 @@ import { methodSteps } from '../data/method';
   .mcard__proof { margin: 0; background: var(--c-surface-2); border-bottom: 1px solid var(--c-border); }
   .mcard__proof img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
   .mcard__proof figcaption { font-size: 0.7rem; color: var(--c-ink-3); padding: 0.4rem 0.9rem; background: #fff; border-top: 1px solid var(--c-border); }
+  /* Emplacement réservé tant que MIG n’a pas fourni la capture. */
+  .mcard__proof--todo { display: grid; grid-template-rows: 1fr auto; min-width: 0; overflow: hidden; }
+  .mcard__todo {
+    aspect-ratio: 16 / 10; display: grid; place-items: center; text-align: center; padding: 0.5rem;
+    min-width: 0; overflow-wrap: anywhere;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--c-ink-3);
+    background-image: repeating-linear-gradient(135deg, rgba(11, 16, 51, 0.05) 0 8px, transparent 8px 16px);
+  }
   .mcard__body { display: grid; gap: 0.5rem; padding: 1.1rem 1.15rem 1.25rem; }
   .mcard__head { display: flex; align-items: baseline; gap: 0.6rem; }
   .mcard__idx { font-weight: 700; color: var(--c-blue-text); }
@@ -60,6 +86,7 @@ import { methodSteps } from '../data/method';
   .mcard__title { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.015em; }
   .mcard__desc { font-size: 0.9375rem; color: var(--c-ink-2); line-height: 1.55; }
   @media (max-width: 599px) {
+    .mcard__todo { aspect-ratio: 1 / 1; font-size: 0.625rem; }
     .mcard { display: grid; grid-template-columns: 112px minmax(0, 1fr); align-items: start; }
     .mcard__proof { border-bottom: 0; border-right: 1px solid var(--c-border); height: 100%; }
     .mcard__proof img { aspect-ratio: 1 / 1; height: 100%; }

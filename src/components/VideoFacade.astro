@@ -4,15 +4,19 @@ import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
 import { methodVideo } from '../data/method';
 import thumb from '../assets/proof/vsl-thumbnail.webp';
-interface Props { badge?: { value: string; label: string } }
-const { badge } = Astro.props;
+interface Props {
+  badge?: { value: string; label: string };
+  /** Permet à une autre page (ex. /cro) de brancher une autre VSL. */
+  video?: { wistiaId: string; title: string; duration: string };
+}
+const { badge, video = methodVideo } = Astro.props;
 ---
 <div class="vsl" data-vsl>
-  <button type="button" class="vsl__btn" data-video={methodVideo.wistiaId}>
+  <button type="button" class="vsl__btn" data-video={video.wistiaId}>
     <span class="sr-only">Lire la vidéo : </span>
     <Image src={thumb} alt="" width={960} height={654} format="webp" loading="eager" fetchpriority="high" class="vsl__thumb" />
     <span class="vsl__play" aria-hidden="true"><Icon name="play" size={28} /></span>
-    <span class="vsl__meta"><strong>{methodVideo.title}</strong><span>{methodVideo.duration}</span></span>
+    <span class="vsl__meta"><strong>{video.title}</strong><span>{video.duration}</span></span>
   </button>
   {badge && (
     <p class="vsl__badge num" aria-label={`${badge.value} ${badge.label}`}>

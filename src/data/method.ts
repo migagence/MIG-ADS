@@ -4,14 +4,16 @@ import googleAds from '../assets/proof/google-ads-dashboard.webp';
 import klaviyo from '../assets/proof/klaviyo-kanal.webp';
 
 export type MethodStep = {
-  id: 'convert' | 'create' | 'acquire' | 'retain';
+  id: string;
   index: string;
   key: string;
   title: string;
   /** Texte repris/adapté de la section « Un pilotage clé en main » du site actuel. */
   description: string;
-  items: string[];
-  proof: { image: ImageMetadata; alt: string; caption: string };
+  items?: string[];
+  proof?: { image: ImageMetadata; alt: string; caption: string };
+  /** Visuel pas encore fourni : libellé de l’emplacement réservé. */
+  proofTodo?: string;
 };
 
 export const methodSteps: MethodStep[] = [

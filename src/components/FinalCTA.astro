@@ -4,15 +4,41 @@ import Icon from './Icon.astro';
 import TrustpilotStars from './TrustpilotStars.astro';
 import { booking, trust } from '../data/site';
 import { notFitFor } from '../data/fit';
+
+/** Sans props : bloc de clôture de la page d’accueil. /cro passe ses propres textes. */
+interface Props {
+  eyebrow?: string;
+  /** Titre en HTML (un <br /> est accepté). */
+  title?: string;
+  /** Texte placé après la durée (« 30 … »). */
+  lead?: string;
+  ctaLabel?: string;
+  ctaSub?: string;
+  steps?: readonly { title: string; text: string }[];
+  notFor?: string;
+}
+const {
+  eyebrow = 'Diagnostic gratuit',
+  title = 'Tu n’as probablement pas besoin de dépenser plus.<br />Tu as besoin de savoir où ton système perd de l’argent.',
+  lead = 'minutes pour identifier tes blocages et tes actions prioritaires.',
+  ctaLabel,
+  ctaSub,
+  steps = [
+    { title: 'Tu choisis ton créneau', text: 'Directement sur le calendrier ci-dessous.' },
+    { title: 'On prépare ton diagnostic', text: 'On regarde ton site, tes campagnes et tes flows avant l’appel.' },
+    { title: 'On débriefe ensemble', text: 'Tu repars avec tes blocages et tes actions prioritaires.' },
+  ],
+  notFor = `Pas pour toi si ${notFitFor[2].replace(/\.$/, '')}.`,
+} = Astro.props;
 ---
 <section class="section closing" id="diagnostic" aria-labelledby="closing-title" data-closing>
   <div class="container closing__grid">
     <div class="closing__copy">
-      <p class="eyebrow eyebrow--light reveal">Diagnostic gratuit · {booking.durationMinutes} min</p>
-      <h2 class="h2 closing__title reveal" id="closing-title" data-delay="1">Tu n’as probablement pas besoin de dépenser plus.<br />Tu as besoin de savoir où ton système perd de l’argent.</h2>
-      <p class="lead closing__lead reveal" data-delay="2">{booking.durationMinutes} minutes pour identifier tes blocages et tes actions prioritaires.</p>
+      <p class="eyebrow eyebrow--light reveal">{eyebrow} · {booking.durationMinutes} min</p>
+      <h2 class="h2 closing__title reveal" id="closing-title" data-delay="1" set:html={title} />
+      <p class="lead closing__lead reveal" data-delay="2">{booking.durationMinutes} {lead}</p>
       <div class="closing__cta reveal" data-delay="3">
-        <CtaButton abLabel size="lg" track="final_cta_click" onDark block />
+        <CtaButton abLabel={!ctaLabel} label={ctaLabel} sub={ctaSub} size="lg" track="final_cta_click" onDark block />
         <p class="microcopy closing__micro">{booking.microcopy}</p>
       </div>
       <ul class="closing__trust reveal" data-delay="4">
@@ -24,11 +50,11 @@ import { notFitFor } from '../data/fit';
     <div class="closing__panel reveal" data-delay="2">
       <h3 class="closing__panel-title">Comment ça se passe</h3>
       <ol class="dsteps">
-        <li><span class="dsteps__idx num" aria-hidden="true">1</span><span><strong>Tu choisis ton créneau</strong><span class="dsteps__text">Directement sur le calendrier ci-dessous.</span></span></li>
-        <li><span class="dsteps__idx num" aria-hidden="true">2</span><span><strong>On prépare ton diagnostic</strong><span class="dsteps__text">On regarde ton site, tes campagnes et tes flows avant l’appel.</span></span></li>
-        <li><span class="dsteps__idx num" aria-hidden="true">3</span><span><strong>On débriefe ensemble</strong><span class="dsteps__text">Tu repars avec tes blocages et tes actions prioritaires.</span></span></li>
+        {steps.map((s, i) => (
+          <li><span class="dsteps__idx num" aria-hidden="true">{i + 1}</span><span><strong>{s.title}</strong><span class="dsteps__text">{s.text}</span></span></li>
+        ))}
       </ol>
-      <p class="closing__not">Pas pour toi si {notFitFor[2].replace(/\.$/, '')}.</p>
+      <p class="closing__not">{notFor}</p>
     </div>
   </div>
 </section>

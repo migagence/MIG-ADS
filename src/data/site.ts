@@ -77,6 +77,13 @@ export const consent = {
   maxAgeDays: 182,
 } as const;
 
+/**
+ * Pages qui contiennent la section de réservation (#reserver).
+ * Sur ces pages, les CTA pointent sur l’ancre locale ; ailleurs (pages légales),
+ * ils renvoient vers la page d’accueil.
+ */
+export const landingPaths = ['/', '/cro'] as const;
+
 export const nav = [
   { label: 'Témoignages', href: '#temoignages' },
   { label: 'Résultats', href: '#resultats' },

@@ -13,6 +13,12 @@ import avatar3 from '../assets/people/sandrine-wagner.png';
 import avatar4 from '../assets/people/mouna-lascar.png';
 const avatars = [avatar1, avatar2, avatar3, avatar4];
 const screens = [...proofScreens, ...proofScreens];
+
+interface Props {
+  /** Permet à /cro de changer l’ordre des vidéos (src/data/cro.ts). */
+  items?: typeof videoTestimonials;
+}
+const { items = videoTestimonials } = Astro.props;
 ---
 <section class="section vt" id="temoignages" aria-labelledby="vt-title">
   <div class="container vt__inner">
@@ -28,7 +34,7 @@ const screens = [...proofScreens, ...proofScreens];
     </p>
 
     <ul class="vt__grid">
-      {videoTestimonials.map((t, i) => (
+      {items.map((t, i) => (
         <li class="vcard reveal" data-delay={String(i + 1)} data-vt={t.id}>
           <div class="vcard__media">
             <Image src={t.poster} alt={`Témoignage vidéo : ${t.name}, ${t.company}`} width={720} height={1280} format="webp" loading="lazy" class="vcard__poster" />

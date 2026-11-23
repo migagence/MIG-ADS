@@ -7,19 +7,34 @@ import Icon from './Icon.astro';
 import TrustpilotStars from './TrustpilotStars.astro';
 import { booking, trust } from '../data/site';
 import { diagnosticSteps } from '../data/diagnostic';
+
+/** Sans props : section de la page d’accueil. /cro passe ses propres textes. */
+interface Props {
+  eyebrow?: string;
+  /** Titre en HTML (un <br /> est accepté). */
+  title?: string;
+  /** Texte placé après la durée (« 30 … »). */
+  lead?: string;
+  steps?: typeof diagnosticSteps;
+  /** Transmis à Calendly en utm_content : identifie la landing d’origine du rendez-vous. */
+  pageTag?: string;
+}
+const {
+  eyebrow = 'Réserve ton créneau',
+  title = 'Réserve ton diagnostic gratuit,<br />disponible sous 24 h.',
+  lead = 'minutes pour identifier où ta croissance fuit et par quoi commencer.',
+  steps = diagnosticSteps,
+  pageTag,
+} = Astro.props;
 ---
-<section class="section booking" id="reserver" aria-labelledby="booking-title" data-booking>
+<section class="section booking" id="reserver" aria-labelledby="booking-title" data-booking data-page-tag={pageTag}>
   <div class="container booking__inner">
-    <p class="eyebrow eyebrow--center reveal">Réserve ton créneau</p>
-    <h2 class="h2 booking__title reveal" id="booking-title" data-delay="1">
-      Réserve ton diagnostic gratuit,<br />disponible sous 24 h.
-    </h2>
-    <p class="lead booking__lead reveal" data-delay="2">
-      {booking.durationMinutes} minutes pour identifier où ta croissance fuit et par quoi commencer.
-    </p>
+    <p class="eyebrow eyebrow--center reveal">{eyebrow}</p>
+    <h2 class="h2 booking__title reveal" id="booking-title" data-delay="1" set:html={title} />
+    <p class="lead booking__lead reveal" data-delay="2">{booking.durationMinutes} {lead}</p>
 
     <ol class="booking__steps reveal" data-delay="2">
-      {diagnosticSteps.map((s) => (
+      {steps.map((s) => (
         <li><span class="booking__step-idx num" aria-hidden="true">{s.index}</span><span><strong>{s.title}</strong> {s.text}</span></li>
       ))}
     </ol>
