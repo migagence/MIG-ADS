@@ -1,15 +1,19 @@
 ---
 import Icon from './Icon.astro';
 import { faq } from '../data/faq';
+
+/** Sans props : FAQ de la page d’accueil. /cro passe ses propres questions. */
+interface Props { eyebrow?: string; title?: string; items?: typeof faq }
+const { eyebrow = 'Avant de commencer', title = 'Les questions qu’on nous pose.', items = faq } = Astro.props;
 ---
 <section class="section section--tight obj" id="questions" aria-labelledby="obj-title">
   <div class="container obj__grid">
     <div class="obj__heading reveal">
-      <p class="eyebrow">Avant de commencer</p>
-      <h2 class="h2" id="obj-title">Les questions qu’on nous pose.</h2>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 class="h2" id="obj-title">{title}</h2>
     </div>
     <div class="obj__list reveal" data-delay="1">
-      {faq.map((item, i) => (
+      {items.map((item, i) => (
         <details class="faq" data-faq={String(i + 1)}>
           <summary>
             <span>{item.q}</span>

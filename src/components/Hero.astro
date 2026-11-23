@@ -7,28 +7,78 @@ import VideoFacade from './VideoFacade.astro';
 import { booking, trust } from '../data/site';
 import { headlineVariants } from '../data/experiments';
 import { clientLogos } from '../data/clients';
+import type { HeroKpi } from '../data/cro';
 import avatar1 from '../assets/people/jean-christophe-gadrat.png';
 import avatar2 from '../assets/people/mariam-gassama.png';
 import avatar3 from '../assets/people/sandrine-wagner.png';
 import avatar4 from '../assets/people/mouna-lascar.png';
 const avatars = [avatar1, avatar2, avatar3, avatar4];
+
+/**
+ * Sans aucune prop, le hero rend exactement celui de la page d’accueil
+ * (titre/CTA en test A/B, preuve Joia, chiffres actuels).
+ * La seconde landing page /cro passe ses propres textes (src/data/cro.ts).
+ */
+interface Props {
+  pill?: string;
+  title?: string;
+  lead?: string;
+  /** Variante courte du sous-titre, affichée sur mobile. */
+  leadShort?: string;
+  ctaLabel?: string;
+  ctaSub?: string;
+  /** Microcopy affichée sous le bouton. */
+  ctaNote?: string;
+  chip?: { href: string; before: string; after: string; unit?: string; label: string };
+  kpis?: HeroKpi[];
+  video?: { wistiaId: string; title: string; duration: string };
+}
+const { pill = 'Agence growth e-commerce', title, lead, leadShort, ctaLabel, ctaSub, ctaNote, chip, kpis, video } = Astro.props;
+
+const defaultKpis: HeroKpi[] = [
+  { value: trust.brandsCount, label: 'marques e-commerce accompagnées', count: 180, prefix: '+' },
+  { value: trust.maxMultiplier, label: 'de CA sur certains cas', count: 6, prefix: '×' },
+  { value: `${trust.rating}/5`, label: 'sur Trustpilot', count: 4.7, decimals: 1, suffix: '/5', stars: true },
+];
+const heroKpis = kpis ?? defaultKpis;
 ---
 <section class="hero" id="top" aria-labelledby="hero-title">
   <div class="container hero__inner">
-    <p class="pill hero__pill">Agence growth e-commerce · <strong>{trust.brandsCount} marques accompagnées</strong></p>
+    <p class="pill hero__pill">{pill} · <strong>{trust.brandsCount} marques accompagnées</strong></p>
     <h1 class="h1 hero__title" id="hero-title">
-      <span data-exp="headline" data-variant="A">{headlineVariants.A.title}</span>
-      <span data-exp="headline" data-variant="B">{headlineVariants.B.title}</span>
+      {title ? title : (
+        <>
+          <span data-exp="headline" data-variant="A">{headlineVariants.A.title}</span>
+          <span data-exp="headline" data-variant="B">{headlineVariants.B.title}</span>
+        </>
+      )}
     </h1>
     <p class="lead hero__lead">
-      <span data-exp="headline" data-variant="A">{headlineVariants.A.lead}</span>
-      <span data-exp="headline" data-variant="B">{headlineVariants.B.lead}</span>
+      {lead ? (
+        <>
+          <span class:list={['hero__lead-long', leadShort && 'hero__lead-long--responsive']}>{lead}</span>
+          {leadShort && <span class="hero__lead-short">{leadShort}</span>}
+        </>
+      ) : (
+        <>
+          <span data-exp="headline" data-variant="A">{headlineVariants.A.lead}</span>
+          <span data-exp="headline" data-variant="B">{headlineVariants.B.lead}</span>
+        </>
+      )}
     </p>
 
-    <div class="hero__media"><VideoFacade /></div>
+    <div class="hero__media"><VideoFacade video={video} /></div>
 
     <div class="hero__cta">
-      <CtaButton abLabel size="lg" track="hero_cta_click" onDark sub={`${booking.microcopy} · ${booking.durationMinutes} min`} />
+      <CtaButton
+        abLabel={!ctaLabel}
+        label={ctaLabel}
+        size="lg"
+        track="hero_cta_click"
+        onDark
+        sub={ctaSub ?? `${booking.microcopy} · ${booking.durationMinutes} min`}
+      />
+      {ctaNote && <p class="microcopy hero__micro">{ctaNote}</p>}
       <!-- Mini section Trustpilot sous le CTA (structure amailzing.fr). -->
       <a href={trust.trustpilotUrl} target="_blank" rel="noopener" class="hero__social" data-track="trustpilot_click">
         <span class="hero__avatars" aria-hidden="true">
@@ -37,24 +87,30 @@ const avatars = [avatar1, avatar2, avatar3, avatar4];
         <TrustpilotStars size={16} />
         <span class="hero__social-text"><strong>{trust.rating}/5</strong> sur Trustpilot · <strong>{trust.brandsCount}</strong> marques accompagnées</span>
       </a>
-      <a href="#case-joia-paris" class="hero__chip" data-exp="heroProof" data-variant="case" data-track="hero_proof_click">
-        <span class="num">4K€ <Icon name="arrow" size={14} /> 250K€<small>/mois</small></span><span>compléments alimentaires · Joia Paris</span>
-      </a>
+      {chip ? (
+        <a href={chip.href} class="hero__chip" data-track="hero_proof_click">
+          <span class="num">{chip.before} <Icon name="arrow" size={14} /> {chip.after}<small>{chip.unit}</small></span><span>{chip.label}</span>
+        </a>
+      ) : (
+        <a href="#case-joia-paris" class="hero__chip" data-exp="heroProof" data-variant="case" data-track="hero_proof_click">
+          <span class="num">4K€ <Icon name="arrow" size={14} /> 250K€<small>/mois</small></span><span>compléments alimentaires · Joia Paris</span>
+        </a>
+      )}
     </div>
 
     <ul class="hero__kpis" aria-label="Chiffres clés">
-      <li class="kpi">
-        <span class="kpi__value num" data-count="180" data-prefix="+">{trust.brandsCount}</span>
-        <span class="kpi__label">marques e-commerce accompagnées</span>
-      </li>
-      <li class="kpi">
-        <span class="kpi__value num" data-count="6" data-prefix="×">×6</span>
-        <span class="kpi__label">de CA sur certains cas</span>
-      </li>
-      <li class="kpi">
-        <span class="kpi__value num" data-count="4.7" data-decimals="1" data-suffix="/5">4,7/5</span>
-        <span class="kpi__label"><TrustpilotStars size={14} /> sur Trustpilot</span>
-      </li>
+      {heroKpis.map((k) => (
+        <li class="kpi">
+          <span
+            class="kpi__value num"
+            data-count={k.count !== undefined ? String(k.count) : undefined}
+            data-prefix={k.prefix}
+            data-suffix={k.suffix}
+            data-decimals={k.decimals !== undefined ? String(k.decimals) : undefined}
+          >{k.value}</span>
+          <span class="kpi__label">{k.stars && <TrustpilotStars size={14} />}{k.label}</span>
+        </li>
+      ))}
     </ul>
     <div class="hero__logos">
       <p class="hero__logos-label">Ils nous font confiance</p>
@@ -98,6 +154,8 @@ const avatars = [avatar1, avatar2, avatar3, avatar4];
   .hero__inner { position: relative; display: grid; justify-items: center; text-align: center; gap: 1.25rem; }
   .hero__title { color: #fff; max-width: 900px; font-size: clamp(2.75rem, 1.8rem + 4.2vw, 5.25rem); }
   .hero__lead { color: var(--c-night-ink); max-width: 640px; }
+  .hero__lead-short { display: none; }
+  .hero__micro { color: var(--c-night-ink); }
   .hero__media { width: 100%; max-width: 880px; margin-top: 0.75rem; }
   .hero__cta { display: grid; justify-items: center; gap: 1rem; margin-top: 0.5rem; }
   .hero__social { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem 0.75rem; color: var(--c-night-ink); font-size: 0.9375rem; min-height: 44px; }
@@ -130,6 +188,10 @@ const avatars = [avatar1, avatar2, avatar3, avatar4];
     .marquee { width: auto; margin-inline: 0; -webkit-mask-image: none; mask-image: none; }
     .marquee__track { animation: none; width: auto; flex-wrap: wrap; justify-content: center; gap: 1.25rem 2rem; }
     .marquee__track li[aria-hidden='true'] { display: none; }
+  }
+  @media (max-width: 640px) {
+    .hero__lead-long--responsive { display: none; }
+    .hero__lead-short { display: inline; }
   }
   @media (max-width: 480px) {
     .hero__pill { font-size: 0.8125rem; padding: 0 0.8rem; }

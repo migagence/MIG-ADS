@@ -4,8 +4,8 @@ import CtaButton from './CtaButton.astro';
 import logoNavy from '../assets/logos/mig-logo-navy.png';
 import logoWhite from '../assets/logos/mig-logo-white.png';
 import { nav } from '../data/site';
-interface Props { solid?: boolean }
-const { solid = false } = Astro.props;
+interface Props { solid?: boolean; ctaLabel?: string; ctaShort?: string }
+const { solid = false, ctaLabel = 'Réserver mon diagnostic', ctaShort = 'Réserver' } = Astro.props;
 ---
 <header class:list={['site-header', solid && 'is-solid']} data-header>
   <div class="container site-header__inner">
@@ -17,7 +17,7 @@ const { solid = false } = Astro.props;
       {nav.map((item) => <a href={item.href} data-track="nav_click">{item.label}</a>)}
     </nav>
     <div class="site-header__cta">
-      <CtaButton size="sm" label="Réserver mon diagnostic" short="Réserver" track="header_cta_click" />
+      <CtaButton size="sm" label={ctaLabel} short={ctaShort} track="header_cta_click" />
     </div>
   </div>
 </header>

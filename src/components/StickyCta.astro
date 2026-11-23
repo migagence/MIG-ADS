@@ -1,9 +1,12 @@
 ---
 import CtaButton from './CtaButton.astro';
 import { booking } from '../data/site';
+
+interface Props { label?: string }
+const { label = 'Réserver mon diagnostic gratuit' } = Astro.props;
 ---
 <div class="sticky-cta" data-sticky-cta aria-hidden="true">
-  <CtaButton label="Réserver mon diagnostic gratuit" track="sticky_cta_click" block />
+  <CtaButton label={label} track="sticky_cta_click" block />
   <p class="microcopy">{booking.microcopy}</p>
 </div>
 <style>
